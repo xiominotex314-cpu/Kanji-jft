@@ -1,0 +1,1671 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Belajar Kanji JFT A2</title>
+  <link rel="manifest" href="data:application/manifest+json,{
+    %22name%22:%22Belajar%20Kanji%20JFT%20A2%22,
+    %22short_name%22:%22Kanji%20JFT%20A2%22,
+    %22start_url%22:%22.%22,
+    %22display%22:%22standalone%22,
+    %22background_color%22:%22%23ffffff%22,
+    %22description%22:%22Aplikasi%20PWA%20untuk%20belajar%20Kanji%20JFT%20A2.%22,
+    %22icons%22:[{
+      %22src%22:%22data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20192%20192'%3e%3ctext%20x='50%25'%20y='50%25'%20dominant-baseline='middle'%20text-anchor='middle'%20font-size='144'%3e%e6%bc%a2%3c/text%3e%3c/svg%3e%22,
+      %22sizes%22:%22192x192%22,
+      %22type%22:%22image/svg+xml%22
+    }]
+  }">
+  <meta name="theme-color" content="#4a6fa5"/>
+  <style>
+    /* ... (semua css dari kode sebelumnya tetap sama) ... */
+    :root {
+      --primary-color: #4a6fa5;
+      --secondary-color: #166088;
+      --accent-color: #ff6b6b;
+      --background-color: #f8f9fa;
+      --card-color: #ffffff;
+      --text-color: #333333;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --info-color: #17a2b8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      position: relative;
+      min-height: 500px;
+    }
+
+    /* Menu Awal */
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .welcome-text {
+      color: var(--text-color);
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      max-width: 600px;
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Kategori */
+    .category-screen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 15px 20px;
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 50%;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .category-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--card-color);
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .category-btn:hover {
+      background-color: var(--primary-color);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .category-btn.selected {
+      background-color: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+
+    .category-options {
+      margin: 20px 0;
+    }
+
+    .category-options .btn {
+      background-color: var(--accent-color);
+    }
+
+    .category-options .btn:hover {
+      background-color: #ff5252;
+    }
+
+    /* Flashcard */
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      height: 250px;
+      margin: 20px 0 10px 0;
+      position: relative;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .flashcard-front {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+    }
+
+    .flashcard-back {
+      background: linear-gradient(135deg, var(--accent-color), #ff8e8e);
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    .kanji-display {
+      font-size: 3.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hiragana-display {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .meaning-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .options-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .option-btn {
+      background-color: var(--card-color);
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-btn:hover {
+      background-color: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .option-btn.correct {
+      background-color: var(--success-color);
+      color: white;
+      border-color: var(--success-color);
+    }
+
+    .option-btn.incorrect {
+      background-color: var(--danger-color);
+      color: white;
+      border-color: var(--danger-color);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      height: 12px;
+      margin: 15px 0 10px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      transition: width 0.5s ease;
+      position: relative;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: var(--text-color);
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+
+    .control-btn {
+      background-color: var(--warning-color);
+      color: #333;
+      padding: 8px 15px;
+    }
+
+    .control-btn:hover {
+      background-color: #e0a800;
+    }
+
+    .skip-btn {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .skip-btn:hover {
+      background-color: #5a6268;
+    }
+
+    .end-btn {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .end-btn:hover {
+      background-color: #c82333;
+    }
+
+    .next-btn {
+      background-color: var(--info-color);
+      color: white;
+    }
+
+    .next-btn:hover {
+      background-color: #138496;
+    }
+
+    /* Feedback */
+    .feedback {
+      position: relative;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      margin: 10px 0;
+      display: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .feedback.correct {
+      color: var(--success-color);
+    }
+
+    .feedback.incorrect {
+      color: var(--danger-color);
+    }
+
+    /* Simple icon buttons */
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background-color: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .icon-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .icon-btn.skip {
+      background-color: #6c757d;
+    }
+
+    .icon-btn.end {
+      background-color: var(--danger-color);
+    }
+
+    .icon-btn.next {
+      background-color: var(--info-color);
+    }
+
+    /* Hasil */
+    .result-container {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .score-display {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin: 20px 0;
+    }
+
+    .message-display {
+      font-size: 1.4rem;
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+
+    .stats-display {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .category-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .category-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+      }
+
+      .options-container {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .kanji-display {
+        font-size: 2.5rem;
+      }
+
+      .meaning-display {
+        font-size: 1.2rem;
+      }
+      
+      .btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      
+      .option-btn {
+        font-size: 0.85rem;
+        padding: 6px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Menu Awal -->
+    <div id="welcome-screen" class="screen active">
+      <h1>🌟 Belajar Kanji JFT A2 🌟</h1>
+      <p class="welcome-text">
+        Selamat datang di aplikasi belajar Kanji JFT A2! 
+        Uji kemampuanmu dengan flashcard interaktif dan seru. 
+        Pilih kategori yang ingin kamu pelajari dan jadilah master kanji!
+      </p>
+      <button class="btn" onclick="showCategoryScreen()">
+        <i class="fas fa-play"></i> Mulai Belajar
+      </button>
+    </div>
+
+    <!-- Pemilihan Kategori -->
+    <div id="category-screen" class="screen">
+      <div class="category-screen-header">
+        <button class="back-btn" onclick="showWelcomeScreen()">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2 style="margin: 0;">Pilih Kategori</h2>
+        <div style="width: 40px;"></div> <!-- Spacer for alignment -->
+      </div>
+      
+      <div class="category-grid">
+        <div class="category-btn" onclick="selectCategory('a')">A</div>
+        <div class="category-btn" onclick="selectCategory('b')">B</div>
+        <div class="category-btn" onclick="selectCategory('c')">C</div>
+        <div class="category-btn" onclick="selectCategory('d')">D</div>
+        <div class="category-btn" onclick="selectCategory('e')">E</div>
+        <div class="category-btn" onclick="selectCategory('f')">F</div>
+        <div class="category-btn" onclick="selectCategory('g')">G</div>
+        <div class="category-btn" onclick="selectCategory('h')">H</div>
+        <div class="category-btn" onclick="selectCategory('i')">I</div>
+        <div class="category-btn" onclick="selectCategory('j')">J</div>
+        <div class="category-btn" onclick="selectCategory('k')">K</div>
+        <div class="category-btn" onclick="selectCategory('m')">M</div>
+        <div class="category-btn" onclick="selectCategory('n')">N</div>
+        <div class="category-btn" onclick="selectCategory('o')">O</div>
+        <div class="category-btn" onclick="selectCategory('p')">P</div>
+        <div class="category-btn" onclick="selectCategory('r')">R</div>
+        <div class="category-btn" onclick="selectCategory('s')">S</div>
+        <div class="category-btn" onclick="selectCategory('t')">T</div>
+        <div class="category-btn" onclick="selectCategory('u')">U</div>
+        <div class="category-btn" onclick="selectCategory('w')">W</div>
+        <div class="category-btn" onclick="selectCategory('y')">Y</div>
+      </div>
+      
+      <div class="category-options">
+        <button class="btn" onclick="selectAllCategories()">
+          <i class="fas fa-check-double"></i> All
+        </button>
+        <button class="btn" onclick="startQuiz()">
+          <i class="fas fa-play"></i> Mulai Kuis
+        </button>
+      </div>
+    </div>
+
+    <!-- SesI Kuis -->
+    <div id="quiz-screen" class="screen">
+      <div class="progress-text">
+        <span id="current-question">1</span> / <span id="total-questions">0</span> 
+        (<span id="progress-percent">0</span>%)
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+      </div>
+      
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-face flashcard-front">
+            <div class="kanji-display" id="question-kanji"></div>
+            <p>Klik jawaban yang benar:</p>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <div class="hiragana-display" id="answer-hiragana"></div>
+            <div class="meaning-display" id="answer-meaning"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="feedback" id="feedback"></div>
+      
+      <div class="options-container" id="options-container">
+        <!-- Options will be inserted here by JavaScript -->
+      </div>
+      
+      <div class="control-buttons">
+        <button class="icon-btn skip" onclick="skipQuestion()" title="Skip">
+          <i class="fas fa-forward"></i>
+        </button>
+        <button class="icon-btn end" onclick="endQuiz()" title="Akhiri">
+          <i class="fas fa-stop"></i>
+        </button>
+        <button class="icon-btn next" id="next-btn" onclick="nextQuestion()" style="display:none;" title="Selanjutnya">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hasil -->
+    <div id="result-screen" class="screen">
+      <h1>Hasil Kuis</h1>
+      <div class="score-display" id="score-display">0%</div>
+      <div class="message-display" id="message-display"></div>
+      <div class="stats-display" id="stats-display"></div>
+      <div class="control-buttons">
+        <button class="btn" onclick="showWelcomeScreen()">
+          <i class="fas fa-home"></i> Menu Awal
+        </button>
+        <button class="btn" onclick="retryIncorrect()">
+          <i class="fas fa-redo"></i> Ulangi yang Salah
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data Kanji dari PDF (disingkat untuk contoh)
+    const kanjiData = [
+      {"no":"1","cara_baca":"Abimasu","kanji":"浴びます","hiragana":"あびます","arti":"Mandi"},
+      {"no":"2","cara_baca":"Abunai","kanji":"危ない","hiragana":"あぶない","arti":"Bahaya"},
+      {"no":"3","cara_baca":"Abura","kanji":"油","hiragana":"あぶら","arti":"Minyak"},
+      {"no":"4","cara_baca":"Aida","kanji":"間","hiragana":"あいだ","arti":"Diantara"},
+      {"no":"5","cara_baca":"Aimasu","kanji":"会います","hiragana":"あいます","arti":"Bertemu"},
+      {"no":"6","cara_baca":"Aji","kanji":"味","hiragana":"あじ","arti":"Rasa"},
+      {"no":"7","cara_baca":"Akai","kanji":"赤い","hiragana":"あかい","arti":"Merah"},
+      {"no":"8","cara_baca":"Akarui","kanji":"明るい","hiragana":"あかるい","arti":"Terang,cerah"},
+      {"no":"9","cara_baca":"Akemasu","kanji":"開けます","hiragana":"あけます","arti":"Membuka"},
+      {"no":"10","cara_baca":"Aki","kanji":"秋","hiragana":"あき","arti":"Musim gugur"},
+      {"no":"11","cara_baca":"Akimasu","kanji":"開きます","hiragana":"あきます","arti":"Terbuka"},
+      {"no":"12","cara_baca":"Amai","kanji":"甘い","hiragana":"あまい","arti":"Manis"},
+      {"no":"13","cara_baca":"Ame","kanji":"雨","hiragana":"あめ","arti":"Hujan"},
+      {"no":"14","cara_baca":"Ane","kanji":"姉","hiragana":"あね","arti":"Kaka cewe(saya)"},
+      {"no":"15","cara_baca":"Ani","kanji":"兄","hiragana":"あに","arti":"Kaka cowo(saya)"},
+      {"no":"16","cara_baca":"Annaishimasu","kanji":"案内します","hiragana":"あんないします","arti":"Memandu"},
+      {"no":"17","cara_baca":"Anshinshimasu","kanji":"安心します","hiragana":"あんしんします","arti":"Lega"},
+      {"no":"18","cara_baca":"Anshou bangou","kanji":"暗証番号","hiragana":"あんしょうばんごう","arti":"Nomor PIN"},
+      {"no":"19","cara_baca":"Anzen","kanji":"安全","hiragana":"あんぜん","arti":"Aman"},
+      {"no":"20","cara_baca":"Aoi","kanji":"青い","hiragana":"あおい","arti":"Biru"},
+      {"no":"21","cara_baca":"Araimasu","kanji":"洗います","hiragana":"あらいます","arti":"Mencuci"},
+      {"no":"22","cara_baca":"Asa","kanji":"朝","hiragana":"あさ","arti":"Pagi"},
+      {"no":"23","cara_baca":"Asagohan","kanji":"朝ご飯","hiragana":"あさごはん","arti":"Makan pagi"},
+      {"no":"24","cara_baca":"Ashi","kanji":"足","hiragana":"あし","arti":"Kaki"},
+      {"no":"25","cara_baca":"Ashita","kanji":"明日","hiragana":"あした","arti":"Besok"},
+      {"no":"26","cara_baca":"Asobimasu","kanji":"遊びます","hiragana":"あそぼます","arti":"Bermain"},
+      {"no":"27","cara_baca":"Atama","kanji":"頭","hiragana":"あたま","arti":"Kepala"},
+      {"no":"28","cara_baca":"Atarashii","kanji":"新しい","hiragana":"あたらしい","arti":"Baru"},
+      {"no":"29","cara_baca":"Atatakai","kanji":"暖かい","hiragana":"あたたかい","arti":"Hangat"},
+      {"no":"30","cara_baca":"Atode","kanji":"後で","hiragana":"あとで","arti":"Setelah,nanti"},
+      {"no":"31","cara_baca":"Atsui","kanji":"暑い","hiragana":"あつい","arti":"Panas(cuaca)"},
+      {"no":"32","cara_baca":"Atsui","kanji":"厚い","hiragana":"あつい","arti":"Tebal"},
+      {"no":"33","cara_baca":"Atsui","kanji":"熱い","hiragana":"あつい","arti":"Panas(benda)"},
+      {"no":"34","cara_baca":"Atsumemasu","kanji":"集めます","hiragana":"あつめます","arti":"Mengumpulkan"},
+      {"no":"1","cara_baca":"Baai","kanji":"場合","hiragana":"ばあい","arti":"Apabila"},
+      {"no":"2","cara_baca":"Bangohan","kanji":"晩ご飯","hiragana":"ばんごはん","arti":"Makan malam"},
+      {"no":"3","cara_baca":"Benkyoushimasu","kanji":"勉強します","hiragana":"べんきょうします","arti":"Belajar"},
+      {"no":"4","cara_baca":"Benri","kanji":"便利","hiragana":"べんり","arti":"Praktis"},
+      {"no":"5","cara_baca":"Bentou","kanji":"弁当","hiragana":"べんとう","arti":"Nasi bekal"},
+      {"no":"6","cara_baca":"Boku","kanji":"僕","hiragana":"ぼく","arti":"Aku"},
+      {"no":"7","cara_baca":"Bounenkai","kanji":"忘年会","hiragana":"ぼうねんかい","arti":"Pesta akhir tahun"},
+      {"no":"8","cara_baca":"Buchou","kanji":"部長","hiragana":"ぶちょう","arti":"Manager"},
+      {"no":"9","cara_baca":"Buhin","kanji":"部品","hiragana":"ぶひん","arti":"Partisi(mesin)"},
+      {"no":"10","cara_baca":"Bungaku","kanji":"文学","hiragana":"ぶんがく","arti":"Sastra"},
+      {"no":"11","cara_baca":"Bunka","kanji":"文化","hiragana":"ぶんか","arti":"Budaya"},
+      {"no":"12","cara_baca":"Butaniku","kanji":"豚肉","hiragana":"ぶたにく","arti":"Daging babi"},
+      {"no":"13","cara_baca":"Byouin","kanji":"病院","hiragana":"びょういん","arti":"Rumah sakit"},
+      {"no":"14","cara_baca":"Byouki","kanji":"病気","hiragana":"びょうき","arti":"Sakit"},
+      {"no":"1","cara_baca":"Chi","kanji":"血","hiragana":"ち","arti":"Darah"},
+      {"no":"2","cara_baca":"Chichi","kanji":"父","hiragana":"ちち","arti":"Ayah"},
+      {"no":"3","cara_baca":"Chiisai","kanji":"小さい","hiragana":"ちいさい","arti":"Kecil"},
+      {"no":"4","cara_baca":"Chikai","kanji":"近い","hiragana":"ちかい","arti":"Dekat"},
+      {"no":"5","cara_baca":"Chikaku","kanji":"近く","hiragana":"ちかく","arti":"Di dekat"},
+      {"no":"6","cara_baca":"Chikatetsu","kanji":"地下鉄","hiragana":"ちかてつ","arti":"Kereta bawah tanah"},
+      {"no":"7","cara_baca":"Chikokushimasu","kanji":"遅刻します","hiragana":"ちこくします","arti":"Terlambat"},
+      {"no":"8","cara_baca":"Chizu","kanji":"地図","hiragana":"ちず","arti":"Peta"},
+      {"no":"9","cara_baca":"Choushi","kanji":"調子","hiragana":"ちょうし","arti":"Keadaan"},
+      {"no":"10","cara_baca":"Chuugakkou","kanji":"中学校","hiragana":"ちゅうがっこう","arti":"Smp"},
+      {"no":"11","cara_baca":"Chuugakusei","kanji":"中学生","hiragana":"ちゅうがくせい","arti":"Siswa smp"},
+      {"no":"12","cara_baca":"Chuugoku","kanji":"中国","hiragana":"ちゅうごく","arti":"China"},
+      {"no":"13","cara_baca":"Chuumonshimasu","kanji":"注文します","hiragana":"ちゅうもんします","arti":"Memesan"},
+      {"no":"1","cara_baca":"Daidokoro","kanji":"台所","hiragana":"だいどころ","arti":"Dapur"},
+      {"no":"2","cara_baca":"Daigaku","kanji":"大学","hiragana":"だいがく","arti":"Universitas"},
+      {"no":"3","cara_baca":"Daigakuin","kanji":"大学院","hiragana":"だいがくいん","arti":"Pendidikan S2"},
+      {"no":"4","cara_baca":"Daigakusei","kanji":"大学生","hiragana":"だいがくせい","arti":"Mahasiswa"},
+      {"no":"5","cara_baca":"Daijoubu","kanji":"大丈夫","hiragana":"だいじょうぶ","arti":"Tidak apa apa"},
+      {"no":"6","cara_baca":"Dasimasu","kanji":"出します","hiragana":"だします","arti":"Mengeluarkan,mengirim"},
+      {"no":"7","cara_baca":"Dasimasu","kanji":"宿題を出します","hiragana":"しゅくだいをだします","arti":"Mengumpulkan PR"},
+      {"no":"8","cara_baca":"Deai","kanji":"出会い","hiragana":"であい","arti":"Pertemuan"},
+      {"no":"9","cara_baca":"Deguchi","kanji":"出口","hiragana":"でぐち","arti":"Pintu keluar"},
+      {"no":"10","cara_baca":"Dekakemasu","kanji":"出かけます","hiragana":"でかけます","arti":"Pergi keluar"},
+      {"no":"11","cara_baca":"Demasu","kanji":"出ます","hiragana":"でます","arti":"Keluar"},
+      {"no":"12","cara_baca":"Denchi","kanji":"電池","hiragana":"でんち","arti":"Baterai"},
+      {"no":"13","cara_baca":"Dengen","kanji":"電源","hiragana":"でんげん","arti":"Power supply,listrik"},
+      {"no":"14","cara_baca":"Dengen o irimasu","kanji":"電源を入れます","hiragana":"でんげんをいれます","arti":"Menyalakan power"},
+      {"no":"15","cara_baca":"Dengen o kirimasu","kanji":"電源を切ります","hiragana":"でんげんをきります","arti":"Mematikan power"},
+      {"no":"16","cara_baca":"Denki","kanji":"電気","hiragana":"でんき","arti":"Listrik"},
+      {"no":"17","cara_baca":"Denkidai","kanji":"電気代","hiragana":"でんきだい","arti":"Biaya listrik"},
+      {"no":"18","cara_baca":"Denpa","kanji":"電波","hiragana":"でんぱ","arti":"Sinyal"},
+      {"no":"19","cara_baca":"Densha","kanji":"電車","hiragana":"でんしゃ","arti":"Kereta"},
+      {"no":"20","cara_baca":"Denshijisho","kanji":"電子辞書","hiragana":"でんしじしょ","arti":"Kamus digital"},
+      {"no":"21","cara_baca":"Denshirenji","kanji":"電子レンジ","hiragana":"でんしレンジ","arti":"Microwave"},
+      {"no":"22","cara_baca":"Denwa","kanji":"電話","hiragana":"でんわ","arti":"Telepon"},
+      {"no":"23","cara_baca":"Denwadai","kanji":"電話代","hiragana":"でんわだい","arti":"Biaya telepon"},
+      {"no":"24","cara_baca":"Denwashimasu","kanji":"電話します","hiragana":"でんわします","arti":"Menelpon"},
+      {"no":"25","cara_baca":"Do","kanji":"度（－度）","hiragana":"ど","arti":"Derajat,suhu"},
+      {"no":"26","cara_baca":"Doubutsuen","kanji":"動物園","hiragana":"どうぶつえん","arti":"Kebun Binatang"},
+      {"no":"27","cara_baca":"Douga","kanji":"動画","hiragana":"どうが","arti":"Video"},
+      {"no":"28","cara_baca":"Dougu","kanji":"道具","hiragana":"どうぐ","arti":"Peralatan"},
+      {"no":"1","cara_baca":"E","kanji":"絵","hiragana":"え","arti":"Gambar,lukisan"},
+      {"no":"2","cara_baca":"Eiga","kanji":"映画","hiragana":"えいが","arti":"Film"},
+      {"no":"3","cara_baca":"Eigakan","kanji":"映画館","hiragana":"えいがかん","arti":"Gedung bioskop"},
+      {"no":"4","cara_baca":"Eigo","kanji":"英語","hiragana":"えいご","arti":"Bahasa inggris"},
+      {"no":"5","cara_baca":"Eki","kanji":"駅","hiragana":"えき","arti":"Stasiun"},
+      {"no":"6","cara_baca":"En","kanji":"円","hiragana":"えん","arti":"Yen"},
+      {"no":"7","cara_baca":"Erabimasu","kanji":"選びます","hiragana":"えらびます","arti":"Memilih"},
+      {"no":"1","cara_baca":"Fuan","kanji":"不安","hiragana":"ぐあん","arti":"Gelisah"},
+      {"no":"2","cara_baca":"Fuben","kanji":"不便","hiragana":"ふべん","arti":"Tidak praktis"},
+      {"no":"3","cara_baca":"Fugoukakushimasu","kanji":"不合格します","hiragana":"ふごうかくします","arti":"Tidak lulus ujian"},
+      {"no":"4","cara_baca":"Fukai","kanji":"深い","hiragana":"ふかい","arti":"Dalam"},
+      {"no":"5","cara_baca":"Fuku","kanji":"服","hiragana":"ふく","arti":"Baju"},
+      {"no":"6","cara_baca":"Fun","kanji":"分","hiragana":"ふん","arti":"Menit"},
+      {"no":"7","cara_baca":"Furimasu","kanji":"降ります","hiragana":"ふります","arti":"Turun"},
+      {"no":"8","cara_baca":"Furoba","kanji":"風呂場","hiragana":"ふろば","arti":"Kamar mandi"},
+      {"no":"9","cara_baca":"Furui","kanji":"古い","hiragana":"ふるい","arti":"Lama,lawas"},
+      {"no":"10","cara_baca":"Futari","kanji":"二人","hiragana":"ふたり","arti":"Dua orang"},
+      {"no":"11","cara_baca":"Futatsu","kanji":"二つ","hiragana":"ふたつ","arti":"Dua barang"},
+      {"no":"12","cara_baca":"Futoi","kanji":"太い","hiragana":"ふとい","arti":"Gemuk"},
+      {"no":"13","cara_baca":"Futsuka","kanji":"二日","hiragana":"ふつか","arti":"Tanggal 2"},
+      {"no":"14","cara_baca":"Fuyu","kanji":"冬","hiragana":"ふゆ","arti":"Musim dingin"},
+      {"no":"15","cara_baca":"Fuyu yasumi","kanji":"冬休み","hiragana":"ふゆやすみ","arti":"Liburan musim dingin"},
+      {"no":"16","cara_baca":"Fuzai","kanji":"不在","hiragana":"ふざい","arti":"Absen"},
+      {"no":"1","cara_baca":"Gaikokujin","kanji":"外国人","hiragana":"がいこくじん","arti":"Orang asing"},
+      {"no":"2","cara_baca":"Gaishutsu","kanji":"外出","hiragana":"がいしゅつ","arti":"Berada diluar kantor"},
+      {"no":"3","cara_baca":"Gakkou","kanji":"学校","hiragana":"がっこう","arti":"Sekolah"},
+      {"no":"4","cara_baca":"Gakusei","kanji":"学生","hiragana":"がくせい","arti":"Siswa,pelajar"},
+      {"no":"5","cara_baca":"Ganbarimasu","kanji":"頑張ります","hiragana":"がんばります","arti":"Bersemangat"},
+      {"no":"6","cara_baca":"Genba","kanji":"現場","hiragana":"げんば","arti":"Tempat kerja lapangan"},
+      {"no":"7","cara_baca":"Genin","kanji":"原因","hiragana":"げんいん","arti":"Penyebab"},
+      {"no":"8","cara_baca":"Genki","kanji":"元気","hiragana":"げんき","arti":"Sehat"},
+      {"no":"9","cara_baca":"Genkin","kanji":"現金","hiragana":"げんき","arti":"Uang tunai"},
+      {"no":"10","cara_baca":"Getsuyoubi","kanji":"月曜日","hiragana":"げつようび","arti":"Hari senin"},
+      {"no":"11","cara_baca":"Ginkou","kanji":"銀行","hiragana":"ぎんこう","arti":"Bank"},
+      {"no":"12","cara_baca":"Ginkouin","kanji":"銀行員","hiragana":"ぎんこういん","arti":"Pegawai bank"},
+      {"no":"13","cara_baca":"Go","kanji":"五","hiragana":"ご","arti":"Lima"},
+      {"no":"14","cara_baca":"Gogo","kanji":"午後","hiragana":"ごご","arti":"Siang,sore,PM"},
+      {"no":"15","cara_baca":"Gomibako","kanji":"ごみ箱","hiragana":"ごみばこ","arti":"Tempat sampah"},
+      {"no":"16","cara_baca":"Goshujin","kanji":"ご主人","hiragana":"ごしゅじん","arti":"Suami orang lain"},
+      {"no":"17","cara_baca":"Goukakushimasu","kanji":"合格します","hiragana":"ごうかくします","arti":"Lulus ujian"},
+      {"no":"18","cara_baca":"Gozen","kanji":"午前","hiragana":"ごぜん","arti":"Pagi AM"},
+      {"no":"19","cara_baca":"Gyuuniku","kanji":"牛肉","hiragana":"ぎゅうにく","arti":"Daging sapi"},
+      {"no":"20","cara_baca":"Gyuunyuu","kanji":"牛乳","hiragana":"ぎゅうにゅう","arti":"Susu sapi"},
+      {"no":"1","cara_baca":"Ha","kanji":"歯","hiragana":"は","arti":"Gigi"},
+      {"no":"2","cara_baca":"Ha","kanji":"葉","hiragana":"は","arti":"Daun"},
+      {"no":"3","cara_baca":"Hachi","kanji":"八","hiragana":"はち","arti":"Delapan"},
+      {"no":"4","cara_baca":"Haha","kanji":"母","hiragana":"はは","arti":"Ibu(saya)"},
+      {"no":"5","cara_baca":"Hahanohi","kanji":"母の日","hiragana":"ははのひ","arti":"Hari ibu"},
+      {"no":"6","cara_baca":"Hairimasu","kanji":"入ります","hiragana":"はいります","arti":"Masuk"},
+      {"no":"7","cara_baca":"Hajimete","kanji":"初めて","hiragana":"はじめて","arti":"Pertama kalinya"},
+      {"no":"8","cara_baca":"Hajimarimasu","kanji":"始まります","hiragana":"はじまります","arti":"Mulai"},
+      {"no":"9","cara_baca":"Hajimemasu","kanji":"始めます","hiragana":"はじめます","arti":"Memulai"},
+      {"no":"10","cara_baca":"Hakobimasu","kanji":"運びます","hiragana":"はこびます","arti":"Mengangkut"},
+      {"no":"11","cara_baca":"Han","kanji":"半","hiragana":"はん","arti":"Setengah"},
+      {"no":"12","cara_baca":"Hana","kanji":"花","hiragana":"はな","arti":"Bunga"},
+      {"no":"13","cara_baca":"Hanami","kanji":"花見","hiragana":"はなみ","arti":"Piknik Melihat bunga"},
+      {"no":"14","cara_baca":"Hanaya","kanji":"花屋","hiragana":"はなや","arti":"Took bunga"},
+      {"no":"15","cara_baca":"Hantaishimasu","kanji":"反対します","hiragana":"はんたいします","arti":"Menentang,berlawanan"},
+      {"no":"16","cara_baca":"Haraimasu","kanji":"払います","hiragana":"はらいます","arti":"Membayar"},
+      {"no":"17","cara_baca":"Haru","kanji":"春","hiragana":"はる","arti":"Musim semi"},
+      {"no":"18","cara_baca":"Hashirimasu","kanji":"走ります","hiragana":"はしります","arti":"Berlari"},
+      {"no":"19","cara_baca":"Hatarakimasu","kanji":"働きます","hiragana":"はたらきます","arti":"Bekerja"},
+      {"no":"20","cara_baca":"Hatsuka","kanji":"二十日","hiragana":"はつか","arti":"Tanggal 20"},
+      {"no":"21","cara_baca":"Hayai","kanji":"速い","hiragana":"はやい","arti":"Cepat(benda bergerak)"},
+      {"no":"22","cara_baca":"Hayai","kanji":"早い","hiragana":"はやい","arti":"Cepat(lebih awal)"},
+      {"no":"23","cara_baca":"Hazushimasu","kanji":"外します","hiragana":"はずします","arti":"Melepaskan"},
+      {"no":"24","cara_baca":"Henji","kanji":"返事","hiragana":"へんじ","arti":"Balasan"},
+      {"no":"25","cara_baca":"Heta","kanji":"下手","hiragana":"へた","arti":"Tidak ahli"},
+      {"no":"26","cara_baca":"Heya","kanji":"部屋","hiragana":"へや","arti":"Kamar"},
+      {"no":"27","cara_baca":"Hi","kanji":"日","hiragana":"ひ","arti":"Matahari"},
+      {"no":"28","cara_baca":"Hi","kanji":"火","hiragana":"ひ","arti":"Api"},
+      {"no":"29","cara_baca":"Hibi","kanji":"日々","hiragana":"ひび","arti":"Hari hari"},
+      {"no":"30","cara_baca":"Hidari","kanji":"左","hiragana":"ひだり","arti":"Kiri"},
+      {"no":"31","cara_baca":"Higashi","kanji":"東","hiragana":"ひがし","arti":"Timur"},
+      {"no":"32","cara_baca":"Hikidasi","kanji":"引き出し","hiragana":"ひきだし","arti":"Laci"},
+      {"no":"33","cara_baca":"Hikimasu","kanji":"引きます","hiragana":"ひきます","arti":"Memainkan alat musik"},
+      {"no":"34","cara_baca":"Hikimasu","kanji":"弾きます","hiragana":"ひきます","arti":"Menarik"},
+      {"no":"35","cara_baca":"Hikouki","kanji":"飛行機","hiragana":"ひこうき","arti":"Pesawat"},
+      {"no":"36","cara_baca":"Hikui","kanji":"低い","hiragana":"ひくい","arti":"Rendah"},
+      {"no":"37","cara_baca":"Hima","kanji":"暇","hiragana":"ひま","arti":"Senggang"},
+      {"no":"38","cara_baca":"Hiroi","kanji":"広い","hiragana":"ひろい","arti":"Luas"},
+      {"no":"39","cara_baca":"Hiru","kanji":"昼","hiragana":"ひる","arti":"Siang"},
+      {"no":"40","cara_baca":"Hirugohan","kanji":"昼ご飯","hiragana":"ひるごはん","arti":"Makan siang"},
+      {"no":"41","cara_baca":"Hitori","kanji":"一人","hiragana":"ひとり","arti":"Satu orang"},
+      {"no":"42","cara_baca":"Hitoride","kanji":"一人で","hiragana":"ひとりで","arti":"Sendirian"},
+      {"no":"43","cara_baca":"Hitotsu","kanji":"一つ","hiragana":"ひとつ","arti":"Satu buah"},
+      {"no":"44","cara_baca":"Hutsuyou","kanji":"必要","hiragana":"ひつよう","arti":"Diperlukan"},
+      {"no":"45","cara_baca":"Hiyashimasu","kanji":"冷やします","hiragana":"ひやします","arti":"Mendinginkan"},
+      {"no":"46","cara_baca":"Hokkaido","kanji":"北海道","hiragana":"ほっかいどう","arti":"Hokkaido"},
+      {"no":"47","cara_baca":"Hon","kanji":"本","hiragana":"ほん","arti":"Buku"},
+      {"no":"48","cara_baca":"Honsha","kanji":"本社","hiragana":"ほんしゃ","arti":"Kantor pusat"},
+      {"no":"49","cara_baca":"Honya","kanji":"本屋","hiragana":"ほんや","arti":"Toko buku"},
+      {"no":"50","cara_baca":"Hontou","kanji":"本当","hiragana":"ほんとう","arti":"Yang sebenarnya"},
+      {"no":"51","cara_baca":"Houmonshimasu","kanji":"訪問します","hiragana":"ほうもんします","arti":"Mengunjungi"},
+      {"no":"52","cara_baca":"Hyaku","kanji":"百","hiragana":"ひゃく","arti":"Ratusan"},
+      {"no":"1","cara_baca":"Ichi","kanji":"一","hiragana":"いち","arti":"Satu"},
+      {"no":"2","cara_baca":"Ichido","kanji":"一度","hiragana":"いちど","arti":"Satu kali"},
+      {"no":"3","cara_baca":"Ichigatsu","kanji":"一月","hiragana":"いちがつ","arti":"Januari"},
+      {"no":"4","cara_baca":"Ichinen-juu","kanji":"一年中","hiragana":"いちねんじゅう","arti":"Satu tahun penuh"},
+      {"no":"5","cara_baca":"Igirisujin","kanji":"イギリス人","hiragana":"イギリスじん","arti":"Orang inggris"},
+      {"no":"6","cara_baca":"Ii","kanji":"良い","hiragana":"いい","arti":"Bagus"},
+      {"no":"7","cara_baca":"Ikebana","kanji":"生け花","hiragana":"いけばな","arti":"Seni merangkai bunga"},
+      {"no":"8","cara_baca":"Iken","kanji":"意見","hiragana":"いけん","arti":"Pendapat"},
+      {"no":"9","cara_baca":"Ikimasu","kanji":"行きます","hiragana":"いきます","arti":"Pergi"},
+      {"no":"10","cara_baca":"Ikkagetsu","kanji":"一か月","hiragana":"いっかげつ","arti":"Selama 1 bulan"},
+      {"no":"11","cara_baca":"Ima","kanji":"今","hiragana":"いま","arti":"Sekarang"},
+      {"no":"12","cara_baca":"Ima","kanji":"居間","hiragana":"いま","arti":"Ruang keluarga"},
+      {"no":"13","cara_baca":"Imi","kanji":"意味","hiragana":"いみ","arti":"Arti"},
+      {"no":"14","cara_baca":"Imouto","kanji":"妹","hiragana":"いもうと","arti":"Adik perempuan"},
+      {"no":"15","cara_baca":"Imoutosan","kanji":"妹さん","hiragana":"いもうとさん","arti":"Adik perempuan/org lain"},
+      {"no":"16","cara_baca":"Inaka","kanji":"田舎","hiragana":"いなか","arti":"Desa,kampung"},
+      {"no":"17","cara_baca":"Inu","kanji":"犬","hiragana":"いぬ","arti":"Anjing"},
+      {"no":"18","cara_baca":"Iremasu","kanji":"入れます","hiragana":"いれます","arti":"Memasukan"},
+      {"no":"19","cara_baca":"Iriguchi","kanji":"入口","hiragana":"いりぐち","arti":"Pintu masuk"},
+      {"no":"20","cara_baca":"Irimasu","kanji":"要ります","hiragana":"いります","arti":"Memerlukan"},
+      {"no":"21","cara_baca":"Iroiro","kanji":"色々","hiragana":"いろいろ","arti":"Bermacam-macam"},
+      {"no":"22","cara_baca":"Isha","kanji":"医者","hiragana":"いしゃ","arti":"Dokter"},
+      {"no":"23","cara_baca":"Isogashii","kanji":"忙しい","hiragana":"いそがしい","arti":"Sibuk"},
+      {"no":"24","cara_baca":"Isogimasu","kanji":"急ぎます","hiragana":"いそぎます","arti":"Bergegas"},
+      {"no":"25","cara_baca":"Isshuukan","kanji":"一週間","hiragana":"いしゅうかん","arti":"Selama 1 minggu"},
+      {"no":"26","cara_baca":"Itai","kanji":"痛い","hiragana":"いたい","arti":"Sakit"},
+      {"no":"27","cara_baca":"Itsuka","kanji":"五日","hiragana":"いつか","arti":"Tanggal 5"},
+      {"no":"28","cara_baca":"Iwai","kanji":"祝い","hiragana":"いわい","arti":"Perayaan"},
+      {"no":"29","cara_baca":"Iwaimasu","kanji":"祝います","hiragana":"いわいます","arti":"Merayakan"},
+      {"no":"1","cara_baca":"Ji","kanji":"時","hiragana":"じ","arti":"Satuan jam"},
+      {"no":"2","cara_baca":"Jibun","kanji":"自分","hiragana":"じぶん","arti":"Diri sendiri"},
+      {"no":"3","cara_baca":"Jibunde","kanji":"自分で","hiragana":"じぶんで","arti":"Oleh diri sendiri"},
+      {"no":"4","cara_baca":"Jidousha","kanji":"自動車","hiragana":"じどうしゃ","arti":"Mobil"},
+      {"no":"5","cara_baca":"Jikan","kanji":"時間","hiragana":"じかん","arti":"Waktu"},
+      {"no":"6","cara_baca":"Jiko","kanji":"事故","hiragana":"じこ","arti":"Kecelakaan"},
+      {"no":"7","cara_baca":"Jinja","kanji":"神社","hiragana":"じんじゃ","arti":"Kuil"},
+      {"no":"8","cara_baca":"Jishin","kanji":"自信","hiragana":"じしん","arti":"Percaya diri"},
+      {"no":"9","cara_baca":"Jitensha","kanji":"自転車","hiragana":"じてんしゃ","arti":"Sepeda"},
+      {"no":"10","cara_baca":"Jouzu","kanji":"上手","hiragana":"じょうず","arti":"Pintar(skill)"},
+      {"no":"11","cara_baca":"Jugyou","kanji":"授業","hiragana":"じゅぎょう","arti":"Pelajaran"},
+      {"no":"12","cara_baca":"Jukenhyou","kanji":"受験票","hiragana":"じゅけんひょう","arti":"Kartu ujian"},
+      {"no":"13","cara_baca":"Jukenryou","kanji":"受験料","hiragana":"じゅけんりょう","arti":"Biaya ujian"},
+      {"no":"14","cara_baca":"Juu","kanji":"十","hiragana":"じゅう","arti":"10"},
+      {"no":"15","cara_baca":"Juuichinichi","kanji":"十一日","hiragana":"じゅういちにち","arti":"Tanggal 11"},
+      {"no":"16","cara_baca":"Juusho","kanji":"住所","hiragana":"じゅうしょ","arti":"Alamat rumah"},
+      {"no":"17","cara_baca":"Juuyokka","kanji":"十四日","hiragana":"じゅうよっか","arti":"Tanggal 14"},
+      {"no":"1","cara_baca":"Kaemasu","kanji":"換えます","hiragana":"かえます","arti":"Menukar"},
+      {"no":"2","cara_baca":"Kaemasu","kanji":"変えます","hiragana":"かえます","arti":"Mengganti"},
+      {"no":"3","cara_baca":"Kaerimasu","kanji":"帰ります","hiragana":"かえります","arti":"Pulang"},
+      {"no":"4","cara_baca":"Kaeshimasu","kanji":"返します","hiragana":"かえします","arti":"Mengembalikan"},
+      {"no":"5","cara_baca":"Kagu","kanji":"家具","hiragana":"かぐ","arti":"Furniture"},
+      {"no":"6","cara_baca":"Kai","kanji":"～回","hiragana":"～かい","arti":"-kali"},
+      {"no":"7","cara_baca":"Kaigai","kanji":"海外","hiragana":"かいがい","arti":"Luar negeri"},
+      {"no":"8","cara_baca":"Kaimonoshimasu","kanji":"買い物します","hiragana":"かいものします","arti":"Berbelanja"},
+      {"no":"9","cara_baca":"Kaiwa","kanji":"会話","hiragana":"かいわ","arti":"Percakapan"},
+      {"no":"10","cara_baca":"Kaji","kanji":"火事","hiragana":"かじ","arti":"Kebakaran"},
+      {"no":"11","cara_baca":"Kakimasu","kanji":"書きます","hiragana":"かきます","arti":"Menulis"},
+      {"no":"12","cara_baca":"Kakimasu","kanji":"描きます","hiragana":"かきます","arti":"Menggambar"},
+      {"no":"13","cara_baca":"Kakunin shimasu","kanji":"確認します","hiragana":"かくにんします","arti":"Memastikan"},
+      {"no":"14","cara_baca":"Kami","kanji":"紙","hiragana":"かみ","arti":"Kertas"},
+      {"no":"15","cara_baca":"Kangaemasu","kanji":"考えます","hiragana":"かんがえます","arti":"Berfikir"},
+      {"no":"16","cara_baca":"Kanji","kanji":"漢字","hiragana":"かんじ","arti":"Huruf kanji"},
+      {"no":"17","cara_baca":"Kankoku","kanji":"韓国","hiragana":"かんこく","arti":"Korea"},
+      {"no":"18","cara_baca":"Kankochi","kanji":"観光地","hiragana":"かんこち","arti":"Tempat wisata"},
+      {"no":"19","cara_baca":"Kantan","kanji":"簡単","hiragana":"かんたん","arti":"Mudah"},
+      {"no":"20","cara_baca":"Kao","kanji":"顔","hiragana":"かお","arti":"Wajah"},
+      {"no":"21","cara_baca":"Karada","kanji":"体","hiragana":"からだ","arti":"Badan"},
+      {"no":"22","cara_baca":"Karai","kanji":"辛い","hiragana":"からい","arti":"Pedas"},
+      {"no":"23","cara_baca":"Karimasu","kanji":"借ります","hiragana":"かります","arti":"Meminjam"},
+      {"no":"24","cara_baca":"Karui","kanji":"軽い","hiragana":"かるい","arti":"Ringan"},
+      {"no":"25","cara_baca":"Kasa","kanji":"傘","hiragana":"かさ","arti":"Paying"},
+      {"no":"26","cara_baca":"Kashimasu","kanji":"貸します","hiragana":"かします","arti":"Meminjamkan"},
+      {"no":"27","cara_baca":"Kata","kanji":"肩","hiragana":"かた","arti":"Bahu"},
+      {"no":"28","cara_baca":"Katazukemasu","kanji":"片つけます","hiragana":"かたづけます","arti":"Membereskan"},
+      {"no":"29","cara_baca":"Kawa","kanji":"川","hiragana":"かわ","arti":"Sungai"},
+      {"no":"30","cara_baca":"Kayoubi","kanji":"火曜日","hiragana":"かようび","arti":"Hari selasa"},
+      {"no":"31","cara_baca":"Kaze","kanji":"風","hiragana":"かぜ","arti":"Angin"},
+      {"no":"32","cara_baca":"Kaze","kanji":"風邪","hiragana":"かぜ","arti":"Flu/masuk angin"},
+      {"no":"33","cara_baca":"Kazoku","kanji":"家族","hiragana":"かぞく","arti":"Keluarga"},
+      {"no":"34","cara_baca":"Kekka","kanji":"結果","hiragana":"けっか","arti":"Hasil"},
+      {"no":"35","cara_baca":"Kekkonshiki","kanji":"結婚式","hiragana":"けっこんしき","arti":"Upacara pernikahan"},
+      {"no":"36","cara_baca":"Kekkonshimasu","kanji":"結婚します","hiragana":"けっこんします","arti":"Menikah"},
+      {"no":"37","cara_baca":"Kengakushimasu","kanji":"見学します","hiragana":"けんがくします","arti":"Melakukan observasi"},
+      {"no":"38","cara_baca":"Kesa","kanji":"今朝","hiragana":"けさ","arti":"Tadi pagi"},
+      {"no":"39","cara_baca":"Keshimasu","kanji":"消します","hiragana":"けします","arti":"Mematikan,menghapus"},
+      {"no":"40","cara_baca":"Ki","kanji":"木","hiragana":"き","arti":"Pohon"},
+      {"no":"41","cara_baca":"Kibun","kanji":"気分","hiragana":"きぶん","arti":"Perasaan(mood)"},
+      {"no":"42","cara_baca":"Kiemasu","kanji":"消えます","hiragana":"きえます","arti":"Padam,mati"},
+      {"no":"43","cara_baca":"Kikimasu","kanji":"聞きます","hiragana":"ききます","arti":"Mendengarkan"},
+      {"no":"45","cara_baca":"Kikoemasu","kanji":"聞こえます","hiragana":"きこえます","arti":"Terdengar"},
+      {"no":"46","cara_baca":"Kimasu","kanji":"来ます","hiragana":"きます","arti":"Datang"},
+      {"no":"47","cara_baca":"Kimemasu","kanji":"決めます","hiragana":"きめます","arti":"Memutuskan"},
+      {"no":"48","cara_baca":"Kimi","kanji":"君","hiragana":"きみ","arti":"Kamu"},
+      {"no":"49","cara_baca":"Kimochi","kanji":"気持ち","hiragana":"きもち","arti":"Perasaan"},
+      {"no":"50","cara_baca":"Kimono","kanji":"着物","hiragana":"きもの","arti":"Kimono"},
+      {"no":"51","cara_baca":"Kingaku","kanji":"金額","hiragana":"きんがく","arti":"Jumlah uang"},
+      {"no":"52","cara_baca":"Kinou","kanji":"昨日","hiragana":"きのう","arti":"Kemarin"},
+      {"no":"53","cara_baca":"Kinyoubi","kanji":"金曜日","hiragana":"きんようび","arti":"Hari jumat"},
+      {"no":"54","cara_baca":"Kinyuushimasu","kanji":"記入します","hiragana":"きにゅうします","arti":"Mengisi formular dsb"},
+      {"no":"55","cara_baca":"Kippu","kanji":"切符","hiragana":"きっぷ","arti":"Karcis,tiket"},
+      {"no":"56","cara_baca":"Kirai","kanji":"嫌い","hiragana":"きらい","arti":"Benci"},
+      {"no":"57","cara_baca":"Kiremasu","kanji":"切れます","hiragana":"きれます","arti":"Putus"},
+      {"no":"58","cara_baca":"Kirimasu","kanji":"切ります","hiragana":"きります","arti":"Memotong"},
+      {"no":"59","cara_baca":"Kisoku","kanji":"規則","hiragana":"きそく","arti":"Peraturan"},
+      {"no":"60","cara_baca":"Kissaten","kanji":"喫茶店","hiragana":"きっさてん","arti":"Kafe"},
+      {"no":"61","cara_baca":"Kita","kanji":"北","hiragana":"きた","arti":"Utara"},
+      {"no":"62","cara_baca":"Kodomonohi","kanji":"子供の日","hiragana":"こどものひ","arti":"Hari anak"},
+      {"no":"63","cara_baca":"Koe","kanji":"声","hiragana":"こえ","arti":"Suara"},
+      {"no":"64","cara_baca":"Kokonoka","kanji":"九日","hiragana":"ここのか","arti":"Tanggal 9"},
+      {"no":"65","cara_baca":"Kokoro","kanji":"心","hiragana":"こころ","arti":"Hati"},
+      {"no":"66","cara_baca":"Komakai okane","kanji":"細かいお金","hiragana":"こまかいおかね","arti":"Uang receh"},
+      {"no":"67","cara_baca":"Konban","kanji":"今晩","hiragana":"こんばん","arti":"Malam ini"},
+      {"no":"68","cara_baca":"Kondo","kanji":"今度","hiragana":"こんど","arti":"Waktu berikutnya"},
+      {"no":"69","cara_baca":"Kongetsu","kanji":"今月","hiragana":"こんげつ","arti":"Bulan ini"},
+      {"no":"70","cara_baca":"Konshuu","kanji":"今週","hiragana":"こんしゅう","arti":"Minggu ini"},
+      {"no":"71","cara_baca":"Kopiiki","kanji":"コピー機","hiragana":"コピーき","arti":"Mesin fotokopi"},
+      {"no":"72","cara_baca":"Kotae","kanji":"答え","hiragana":"こたえ","arti":"Jawaban"},
+      {"no":"73","cara_baca":"Kotaemasu","kanji":"答えます","hiragana":"こたえます","arti":"Menjawab"},
+      {"no":"74","cara_baca":"Kotoba","kanji":"言葉","hiragana":"ことば","arti":"Kosakata"},
+      {"no":"75","cara_baca":"Kotoshi","kanji":"今年","hiragana":"ことし","arti":"Tahun ini"},
+      {"no":"76","cara_baca":"Kouen","kanji":"公園","hiragana":"こうえん","arti":"Taman"},
+      {"no":"77","cara_baca":"Kouji","kanji":"工事","hiragana":"こうじ","arti":"Kerja kontruksi"},
+      {"no":"78","cara_baca":"Koujou","kanji":"工場","hiragana":"こうじょう","arti":"Pabrik"},
+      {"no":"79","cara_baca":"Koukou","kanji":"高校","hiragana":"こうこう","arti":"Sma"},
+      {"no":"80","cara_baca":"Koukousei","kanji":"高校生","hiragana":"こうこうせい","arti":"Siswa sma"},
+      {"no":"81","cara_baca":"Koutsuu","kanji":"交通","hiragana":"こうつう","arti":"Lalu lintas"},
+      {"no":"82","cara_baca":"Kouza","kanji":"口座","hiragana":"こうざ","arti":"Rekening bank"},
+      {"no":"83","cara_baca":"Kouza bangou","kanji":"口座番号","hiragana":"こうざばんごう","arti":"Nomor rekening bank"},
+      {"no":"84","cara_baca":"Ku","kanji":"九","hiragana":"く","arti":"Sembilan"},
+      {"no":"85","cara_baca":"Kubi wo kirimasu","kanji":"首を切ります","hiragana":"くびをきります","arti":"Memecat"},
+      {"no":"86","cara_baca":"Kuchi","kanji":"口","hiragana":"くち","arti":"Mulut"},
+      {"no":"87","cara_baca":"Kudamono","kanji":"果物","hiragana":"くだもの","arti":"Buah-buahan"},
+      {"no":"88","cara_baca":"Kugatsu","kanji":"九月","hiragana":"くがつ","arti":"Bulan 9"},
+      {"no":"89","cara_baca":"Kumo","kanji":"曇","hiragana":"くも","arti":"Mendung"},
+      {"no":"90","cara_baca":"Kurai","kanji":"暗い","hiragana":"くらい","arti":"Gelap"},
+      {"no":"91","cara_baca":"Kuroi","kanji":"黒い","hiragana":"くろい","arti":"Hitam"},
+      {"no":"92","cara_baca":"Kurushii","kanji":"苦しい","hiragana":"くるしい","arti":"Menderita"},
+      {"no":"93","cara_baca":"Kusuri","kanji":"薬","hiragana":"くすり","arti":"Obat"},
+      {"no":"94","cara_baca":"Kusuriya","kanji":"薬屋","hiragana":"くすりや","arti":"Took obat"},
+      {"no":"95","cara_baca":"Kuuki","kanji":"空気","hiragana":"くうき","arti":"Udara"},
+      {"no":"96","cara_baca":"Kuwashii","kanji":"詳しい","hiragana":"くわしい","arti":"Teliti"},
+      {"no":"97","cara_baca":"Kyoka","kanji":"許可","hiragana":"きょか","arti":"Ijin"},
+      {"no":"98","cara_baca":"Kyonen","kanji":"去年","hiragana":"きょねん","arti":"Tahun lalu"},
+      {"no":"99","cara_baca":"Kyou","kanji":"今日","hiragana":"きょう","arti":"Hari ini"},
+      {"no":"100","cara_baca":"Kyoudai","kanji":"兄弟","hiragana":"きょうだい","arti":"Saudara kandung"},
+      {"no":"101","cara_baca":"Kyoushitsu","kanji":"教室","hiragana":"きょうしつ","arti":"Ruang kelas"},
+      {"no":"102","cara_baca":"Kyouto","kanji":"京都","hiragana":"きょうと","arti":"Kyouto"},
+      {"no":"103","cara_baca":"Kyuu","kanji":"九","hiragana":"きゅう","arti":"Sembilan"},
+      {"no":"104","cara_baca":"Kyuukyuusha","kanji":"救急車","hiragana":"きゅうきゅうしゃ","arti":"Mobil ambulan"},
+      {"no":"105","cara_baca":"Kyuuni","kanji":"急に","hiragana":"きゅうに","arti":"Tiba-tiba"},
+      {"no":"1","cara_baca":"Machi","kanji":"町","hiragana":"まち","arti":"Kota"},
+      {"no":"2","cara_baca":"Mado","kanji":"窓","hiragana":"まど","arti":"Jendela"},
+      {"no":"3","cara_baca":"Mae","kanji":"前","hiragana":"まえ","arti":"Depan"},
+      {"no":"4","cara_baca":"Maiasa","kanji":"毎朝","hiragana":"まいあさ","arti":"Setiap pagi"},
+      {"no":"5","cara_baca":"Maiban","kanji":"毎晩","hiragana":"まいばん","arti":"Setiap malam"},
+      {"no":"6","cara_baca":"Mainichi","kanji":"毎日","hiragana":"まいにち","arti":"Setiap hari"},
+      {"no":"7","cara_baca":"Maitsuki","kanji":"毎月","hiragana":"まいつき","arti":"Setiap bulan"},
+      {"no":"8","cara_baca":"Mamorimasu","kanji":"守ります","hiragana":"まもります","arti":"Memelihara, menjaga"},
+      {"no":"9","cara_baca":"Man","kanji":"万","hiragana":"まん","arti":"Puluhan ribu"},
+      {"no":"10","cara_baca":"Maniaimasu","kanji":"間に合います","hiragana":"まにあいます","arti":"Tepat waktu(on time)"},
+      {"no":"11","cara_baca":"Matsuri","kanji":"祭り","hiragana":"まつり","arti":"Festifal budaya jepang"},
+      {"no":"12","cara_baca":"Mawashimasu","kanji":"回します","hiragana":"まわします","arti":"Memutar"},
+      {"no":"13","cara_baca":"Me","kanji":"目","hiragana":"め","arti":"Mata"},
+      {"no":"14","cara_baca":"Megusuri","kanji":"目薬","hiragana":"めぐすり","arti":"Obat mata"},
+      {"no":"15","cara_baca":"Mibunshoumeisho","kanji":"身分証明書","hiragana":"みぶんしょうめいしょ","arti":"Kartu identitas diri"},
+      {"no":"16","cara_baca":"Michi","kanji":"道","hiragana":"みち","arti":"Jalan"},
+      {"no":"17","cara_baca":"Miemasu","kanji":"見えます","hiragana":"みえます","arti":"Terlihat"},
+      {"no":"18","cara_baca":"Migi","kanji":"右","hiragana":"みぎ","arti":"Kanan"},
+      {"no":"19","cara_baca":"Mijikai","kanji":"短い","hiragana":"みじかい","arti":"Pendek"},
+      {"no":"20","cara_baca":"Mikka","kanji":"三日","hiragana":"みっか","arti":"Tanggal 3"},
+      {"no":"21","cara_baca":"Mimasu","kanji":"診ます","hiragana":"みます","arti":"Memeriksa Kesehatan"},
+      {"no":"22","cara_baca":"Mimasu","kanji":"見ます","hiragana":"みます","arti":"Melihat,menonton"},
+      {"no":"23","cara_baca":"Mimi","kanji":"耳","hiragana":"みみ","arti":"Telinga"},
+      {"no":"24","cara_baca":"Minami","kanji":"南","hiragana":"みなみ","arti":"Selatan"},
+      {"no":"25","cara_baca":"Minato","kanji":"港","hiragana":"みなと","arti":"Pelabuhan"},
+      {"no":"26","cara_baca":"Mise","kanji":"店","hiragana":"みせ","arti":"toko"},
+      {"no":"27","cara_baca":"Misemasu","kanji":"見せます","hiragana":"みせます","arti":"Memperlihatkan"},
+      {"no":"28","cara_baca":"Mistukemasu","kanji":"見つけます","hiragana":"みつけます","arti":"Menemukan"},
+      {"no":"29","cara_baca":"Mizu","kanji":"水","hiragana":"みず","arti":"Air"},
+      {"no":"30","cara_baca":"Modorimasu","kanji":"戻ります","hiragana":"もどります","arti":"Kembali"},
+      {"no":"31","cara_baca":"Modoshimasu","kanji":"戻します","hiragana":"もどします","arti":"Mengembalikan"},
+      {"no":"32","cara_baca":"Mokuyoubi","kanji":"木曜日","hiragana":"もくようび","arti":"Kamis"},
+      {"no":"33","cara_baca":"Mondai","kanji":"問題","hiragana":"もんだい","arti":"Soal,masalah"},
+      {"no":"34","cara_baca":"Mori","kanji":"森","hiragana":"もり","arti":"Hutan"},
+      {"no":"35","cara_baca":"Moushikomi","kanji":"申し込み","hiragana":"もしこみ","arti":"Pendaftaran"},
+      {"no":"36","cara_baca":"Moushikomimasu","kanji":"申し込みます","hiragana":"もしこみます","arti":"Mendaftar"},
+      {"no":"37","cara_baca":"Muika","kanji":"六日","hiragana":"むいか","arti":"Tanggal 6"},
+      {"no":"38","cara_baca":"Mukaemasu","kanji":"迎えます","hiragana":"むかえます","arti":"Bergerak"},
+      {"no":"39","cara_baca":"Muryou","kanji":"無料","hiragana":"むりょう","arti":"Gratis"},
+      {"no":"40","cara_baca":"Muzukashii","kanji":"難しい","hiragana":"むずかしい","arti":"Sulit,susah"},
+      {"no":"1","cara_baca":"Nagai","kanji":"長い","hiragana":"ながい","arti":"Panjang"},
+      {"no":"2","cara_baca":"Naka","kanji":"中","hiragana":"なか","arti":"Dalam"},
+      {"no":"3","cara_baca":"Nakimasu","kanji":"泣きます","hiragana":"なきます","arti":"Menangis"},
+      {"no":"4","cara_baca":"Nakunarimasu","kanji":"亡くなります","hiragana":"なくなります","arti":"Meninggal"},
+      {"no":"5","cara_baca":"Nama","kanji":"生","hiragana":"なま","arti":"Mentah"},
+      {"no":"6","cara_baca":"Namae","kanji":"名前","hiragana":"なまえ","arti":"Nama"},
+      {"no":"7","cara_baca":"Nami","kanji":"波","hiragana":"なみ","arti":"Ombak"},
+      {"no":"8","cara_baca":"Namida","kanji":"涙","hiragana":"なみだ","arti":"Airmata"},
+      {"no":"9","cara_baca":"Nana","kanji":"七","hiragana":"なな","arti":"Tujuh"},
+      {"no":"10","cara_baca":"Nanagatsu","kanji":"何月","hiragana":"なんがつ","arti":"Bulan berapa"},
+      {"no":"11","cara_baca":"Nanmai","kanji":"何枚","hiragana":"なんまい","arti":"Berapa lembar"},
+      {"no":"12","cara_baca":"Nannichi","kanji":"何日","hiragana":"なんにち","arti":"Tanggal berapa"},
+      {"no":"13","cara_baca":"Nannin","kanji":"何人","hiragana":"なんにん","arti":"Berapa orang"},
+      {"no":"14","cara_baca":"Nanoka","kanji":"七日","hiragana":"なのか","arti":"Tanggal 7"},
+      {"no":"15","cara_baca":"Naorimasu","kanji":"治ります","hiragana":"なおります","arti":"Sembuh"},
+      {"no":"16","cara_baca":"Naorimasu","kanji":"直ります","hiragana":"なおります","arti":"Membaik(dari kerusakan)"},
+      {"no":"17","cara_baca":"Naoshimasu","kanji":"治します","hiragana":"なおします","arti":"Membetulkan"},
+      {"no":"18","cara_baca":"Naoshimasu","kanji":"直します","hiragana":"なおします","arti":"Menyembuhkan"},
+      {"no":"19","cara_baca":"Naraimasu","kanji":"習います","hiragana":"ならいます","arti":"Mempelajari"},
+      {"no":"20","cara_baca":"Natsu","kanji":"夏","hiragana":"なつ","arti":"Musim panas"},
+      {"no":"21","cara_baca":"Natsuyasumi","kanji":"夏休み","hiragana":"なつやすみ","arti":"Libur musim panas"},
+      {"no":"22","cara_baca":"Negaimasu","kanji":"願います","hiragana":"ねがいます","arti":"Memohon"},
+      {"no":"23","cara_baca":"Neko","kanji":"猫","hiragana":"ねこ","arti":"Kucing"},
+      {"no":"24","cara_baca":"Nemasu","kanji":"寝ます","hiragana":"ねます","arti":"Tidur"},
+      {"no":"25","cara_baca":"Nemui","kanji":"眠い","hiragana":"ねむい","arti":"Mengantuk"},
+      {"no":"26","cara_baca":"Nen","kanji":"年","hiragana":"ねん","arti":"Tahun"},
+      {"no":"27","cara_baca":"~ Nensei","kanji":"~年生","hiragana":"~ねんせい","arti":"Tingkatan kelas sekolah"},
+      {"no":"28","cara_baca":"Netsu","kanji":"熱","hiragana":"ねつ","arti":"Panas, demam"},
+      {"no":"29","cara_baca":"Ni","kanji":"二","hiragana":"に","arti":"Dua"},
+      {"no":"30","cara_baca":"Nichiyoubi","kanji":"日曜日","hiragana":"にちようび","arti":"Hari minggu"},
+      {"no":"31","cara_baca":"Nigai","kanji":"苦い","hiragana":"にがい","arti":"Pahit"},
+      {"no":"32","cara_baca":"Nigate","kanji":"苦手","hiragana":"にがて","arti":"Tidak bisa, tidak ahli"},
+      {"no":"33","cara_baca":"Nihongo","kanji":"日本語","hiragana":"にほんご","arti":"Bahasa jepang"},
+      {"no":"34","cara_baca":"Nijuuichinichi","kanji":"二十一日","hiragana":"にじゅういちにち","arti":"Tanggal 21"},
+      {"no":"35","cara_baca":"Nikagetsu","kanji":"二ヶ月","hiragana":"にかげつ","arti":"Selama 2 bulan"},
+      {"no":"36","cara_baca":"Nikki","kanji":"日記","hiragana":"にっき","arti":"Buku harian"},
+      {"no":"37","cara_baca":"Nikuya","kanji":"肉屋","hiragana":"にくや","arti":"Toko daging"},
+      {"no":"38","cara_baca":"Nimotsu","kanji":"荷物","hiragana":"にもつ","arti":"Barang bawaan"},
+      {"no":"39","cara_baca":"Ningenkankei","kanji":"人間関係","hiragana":"にんげんかんけい","arti":"Hubungan antar manusia"},
+      {"no":"40","cara_baca":"Nishi","kanji":"西","hiragana":"にし","arti":"Barat"},
+      {"no":"41","cara_baca":"Nishuukan","kanji":"二週間","hiragana":"にしゅうかん","arti":"Selama 2 minggu"},
+      {"no":"42","cara_baca":"Niwa","kanji":"庭","hiragana":"にわ","arti":"Halaman rumah"},
+      {"no":"43","cara_baca":"Noborimasu","kanji":"登ります","hiragana":"のぼります","arti":"Mendaki"},
+      {"no":"45","cara_baca":"Nomikai","kanji":"飲み会","hiragana":"のみかい","arti":"Acara minum bersama"},
+      {"no":"46","cara_baca":"Nomimasu","kanji":"飲みます","hiragana":"のみます","arti":"Minum"},
+      {"no":"47","cara_baca":"Nomimono","kanji":"飲み物","hiragana":"のみもの","arti":"Minuman"},
+      {"no":"48","cara_baca":"Norimasu","kanji":"乗ります","hiragana":"のります","arti":"Naik kendaraan"},
+      {"no":"49","cara_baca":"Nyuugakushiki","kanji":"入学式","hiragana":"にゅうがくしき","arti":"Upacara masuk sekolah"},
+      {"no":"50","cara_baca":"Nyuugakushiken","kanji":"入学試験","hiragana":"にゅうがくしけん","arti":"Ujian masuk sekolah"},
+      {"no":"51","cara_baca":"Nyuuingshimasu","kanji":"入院します","hiragana":"にゅういんします","arti":"Masuk rumah sakit, opname"},
+      {"no":"1","cara_baca":"Oboemasu","kanji":"覚えます","hiragana":"おぼえます","arti":"Mengingat, menghafal"},
+      {"no":"2","cara_baca":"Ocha","kanji":"お茶","hiragana":"おちゃ","arti":"Teh jepang"},
+      {"no":"3","cara_baca":"Ochimasu","kanji":"落ちます","hiragana":"おちます","arti":"Jatuh"},
+      {"no":"4","cara_baca":"Ofuro","kanji":"お風呂","hiragana":"おふろ","arti":"Bak mandi"},
+      {"no":"5","cara_baca":"Oinorishimasu","kanji":"お祈りします","hiragana":"おいのりします","arti":"Berdoa"},
+      {"no":"6","cara_baca":"Oiwai","kanji":"お祝い","hiragana":"おいわい","arti":"Perayaan"},
+      {"no":"7","cara_baca":"Oiwaishimasu","kanji":"お祝いします","hiragana":"おいわいします","arti":"Merayakan"},
+      {"no":"8","cara_baca":"Okaasan","kanji":"お母さん","hiragana":"おかあさん","arti":"Ibu orang lain/panggilan ibu"},
+      {"no":"9","cara_baca":"Okimasu","kanji":"起きます","hiragana":"おきます","arti":"Bangun"},
+      {"no":"10","cara_baca":"Okimasu","kanji":"起きます","hiragana":"おきます","arti":"Terjadi"},
+      {"no":"11","cara_baca":"Okonaimasu","kanji":"行います","hiragana":"おこないます","arti":"Menyelenggarakan"},
+      {"no":"12","cara_baca":"Okorimasu","kanji":"怒ります","hiragana":"おこります","arti":"Marah"},
+      {"no":"13","cara_baca":"Okoshimasu","kanji":"起こします","hiragana":"おこします","arti":"Membangunkan"},
+      {"no":"14","cara_baca":"Okuremasu","kanji":"遅れます","hiragana":"おくれます","arti":"Terlambat"},
+      {"no":"15","cara_baca":"Okurimasu","kanji":"送ります","hiragana":"おくります","arti":"Mengirim"},
+      {"no":"16","cara_baca":"Okurimono","kanji":"贈り物","hiragana":"おくりもの","arti":"Bingkisan"},
+      {"no":"17","cara_baca":"Okusan","kanji":"奥さん","hiragana":"おくさん","arti":"Istri orang lain"},
+      {"no":"18","cara_baca":"Okyakusan","kanji":"お客さん","hiragana":"おきゃくさん","arti":"Tamu"},
+      {"no":"19","cara_baca":"Omatsuri","kanji":"お祭り","hiragana":"おまつり","arti":"Festival budaya"},
+      {"no":"20","cara_baca":"Omiyage","kanji":"お土産","hiragana":"おみやげ","arti":"Oleh-oleh"},
+      {"no":"21","cara_baca":"Omoi","kanji":"思い","hiragana":"おもい","arti":"Berat"},
+      {"no":"22","cara_baca":"Omoidashimasu","kanji":"思い出します","hiragana":"おもいだします","arti":"Kenangan"},
+      {"no":"23","cara_baca":"Omoshiroi","kanji":"面白い","hiragana":"おもしろい","arti":"Menarik, seru"},
+      {"no":"24","cara_baca":"Oneesan","kanji":"お姉さん","hiragana":"おねえさん","arti":"Kaka perempuan orang lain/panggilan kaka perempuan"},
+      {"no":"25","cara_baca":"Ongaku","kanji":"音楽","hiragana":"おんがく","arti":"Musik"},
+      {"no":"26","cara_baca":"Oniisan","kanji":"お兄さん","hiragana":"おにいさん","arti":"Kaka laki-laki orang lain/panggilan kaka laki-laki orang lain"},
+      {"no":"27","cara_baca":"Ooi","kanji":"多い","hiragana":"おおい","arti":"Banyak"},
+      {"no":"28","cara_baca":"Ookii","kanji":"大きい","hiragana":"おおきい","arti":"Besar"},
+      {"no":"29","cara_baca":"Oremasu","kanji":"折れます","hiragana":"おれます","arti":"Patah"},
+      {"no":"30","cara_baca":"Origami","kanji":"折り紙","hiragana":"おりがみ","arti":"Seni lipat kertas"},
+      {"no":"31","cara_baca":"Orimasu","kanji":"降ります","hiragana":"おります","arti":"Turun kendaraan"},
+      {"no":"32","cara_baca":"Oroshimasu","kanji":"下ろします","hiragana":"おろします","arti":"Menurunkan barang"},
+      {"no":"33","cara_baca":"Oroshimasu","kanji":"下ろします","hiragana":"おろします","arti":"Mengambil uang"},
+      {"no":"34","cara_baca":"Osake","kanji":"お酒","hiragana":"おさけ","arti":"Sake"},
+      {"no":"35","cara_baca":"Osara","kanji":"お皿","hiragana":"おさら","arti":"Piring"},
+      {"no":"36","cara_baca":"Oshiemasu","kanji":"教えます","hiragana":"おしえます","arti":"Mengajari, memberitahu"},
+      {"no":"37","cara_baca":"Oshiire","kanji":"押入れ","hiragana":"おしいれ","arti":"Lemari dinding"},
+      {"no":"38","cara_baca":"Oshimasu","kanji":"押します","hiragana":"おします","arti":"Menekan, mendorong"},
+      {"no":"39","cara_baca":"Oshirase","kanji":"お知らせ","hiragana":"おしらせ","arti":"Pengumuman"},
+      {"no":"40","cara_baca":"Oshougatsu","kanji":"お正月","hiragana":"おしょうがつ","arti":"Tahun baru"},
+      {"no":"41","cara_baca":"Osoi","kanji":"遅い","hiragana":"おそい","arti":"Lama, lambat"},
+      {"no":"42","cara_baca":"Otearai","kanji":"お手洗い","hiragana":"おてあらい","arti":"Toilet"},
+      {"no":"43","cara_baca":"Otera","kanji":"お寺","hiragana":"おてら","arti":"Kuil budha"},
+      {"no":"45","cara_baca":"Oto","kanji":"音","hiragana":"おと","arti":"Bunyi benda"},
+      {"no":"46","cara_baca":"Otousan","kanji":"お父さん","hiragana":"おとうさん","arti":"Ayah orang lain/panggilan ayah"},
+      {"no":"47","cara_baca":"Otouto","kanji":"弟","hiragana":"おとうと","arti":"Adik laki-laki saya"},
+      {"no":"48","cara_baca":"Otoutosan","kanji":"弟さん","hiragana":"おとうとさん","arti":"Adik laki-laki orang lain"},
+      {"no":"49","cara_baca":"Otsuri","kanji":"お釣り","hiragana":"おつり","arti":"Uang kembalian"},
+      {"no":"50","cara_baca":"Otto","kanji":"夫","hiragana":"おっと","arti":"Suami"},
+      {"no":"51","cara_baca":"Owari","kanji":"終わり","hiragana":"おわり","arti":"Selesai"},
+      {"no":"52","cara_baca":"Oyu","kanji":"お湯","hiragana":"おゆ","arti":"Air panas"},
+      {"no":"1","cara_baca":"Pun","kanji":"分","hiragana":"ぷん","arti":"Menit"},
+      {"no":"1","cara_baca":"Raigetsu","kanji":"来月","hiragana":"らいげつ","arti":"Bulan depan"},
+      {"no":"2","cara_baca":"Rainen","kanji":"来年","hiragana":"らいねん","arti":"Tahun depan"},
+      {"no":"3","cara_baca":"Raishuu","kanji":"来週","hiragana":"らいしゅう","arti":"Minggu depan"},
+      {"no":"4","cara_baca":"Raku","kanji":"楽","hiragana":"らく","arti":"Ringan(untuk dilakukan)"},
+      {"no":"5","cara_baca":"Reizouko","kanji":"冷蔵庫","hiragana":"れいぞうこ","arti":"Lemari es"},
+      {"no":"6","cara_baca":"Rekishi","kanji":"歴史","hiragana":"れきし","arti":"Sejarah"},
+      {"no":"7","cara_baca":"Renkyuu","kanji":"連休","hiragana":"れんきゅう","arti":"Libur panjang"},
+      {"no":"8","cara_baca":"Renshuu","kanji":"練習","hiragana":"れんしゅう","arti":"Latihan"},
+      {"no":"9","cara_baca":"Riyoushimasu","kanji":"利用します","hiragana":"りようします","arti":"Memanfaatkan"},
+      {"no":"10","cara_baca":"Riyuu","kanji":"理由","hiragana":"りゆう","arti":"Alasan"},
+      {"no":"11","cara_baca":"Roku","kanji":"六","hiragana":"ろく","arti":"Enam"},
+      {"no":"12","cara_baca":"Ryokan","kanji":"旅館","hiragana":"りょかん","arti":"Hotel khas jepang"},
+      {"no":"13","cara_baca":"Ryokou","kanji":"旅行","hiragana":"りょこう","arti":"Traveling"},
+      {"no":"14","cara_baca":"Ryokoushimasu","kanji":"旅行します","hiragana":"りょこうします","arti":"Melakukan traveling"},
+      {"no":"15","cara_baca":"Ryoukin","kanji":"料金","hiragana":"りょうきん","arti":"Biaya"},
+      {"no":"16","cara_baca":"Ryouri","kanji":"料理","hiragana":"りょうり","arti":"Masakan"},
+      {"no":"17","cara_baca":"Ryoushin","kanji":"両親","hiragana":"りょうしん","arti":"Kedua orang tua"},
+      {"no":"18","cara_baca":"Ryuugakusei","kanji":"留学生","hiragana":"りゅうがくせい","arti":"Pelajar asing"},
+      {"no":"19","cara_baca":"Ryuugakushimasu","kanji":"留学します","hiragana":"りゅうがくします","arti":"Belajar ke luar negri"},
+      {"no":"1","cara_baca":"Sadou","kanji":"茶道","hiragana":"さどう","arti":"Upacara minum teh"},
+      {"no":"2","cara_baca":"Sagarimasu","kanji":"下がります","hiragana":"さがります","arti":"Turun"},
+      {"no":"3","cara_baca":"Sagashimasu","kanji":"探します","hiragana":"さがします","arti":"Mencari"},
+      {"no":"4","cara_baca":"Sagemasu","kanji":"下げます","hiragana":"さげます","arti":"Membungkukkan, menundukkan"},
+      {"no":"5","cara_baca":"Sakana","kanji":"魚","hiragana":"さかな","arti":"Ikan"},
+      {"no":"6","cara_baca":"Sake","kanji":"酒","hiragana":"さけ","arti":"Sake"},
+      {"no":"7","cara_baca":"Samui","kanji":"寒い","hiragana":"さむい","arti":"Dingin(untuk udara)"},
+      {"no":"8","cara_baca":"San","kanji":"三","hiragana":"さん","arti":"Tiga"},
+      {"no":"9","cara_baca":"Sankashimasu","kanji":"参加します","hiragana":"さんかします","arti":"Berpartisipasi"},
+      {"no":"10","cara_baca":"Sanposhimasu","kanji":"散歩します","hiragana":"さんぽします","arti":"Jalan-jalan"},
+      {"no":"11","cara_baca":"Sentakumono","kanji":"洗濯物","hiragana":"せんたくもの","arti":"Cucian"},
+      {"no":"12","cara_baca":"Satou","kanji":"砂糖","hiragana":"さとう","arti":"Gula"},
+      {"no":"13","cara_baca":"Se ga takai","kanji":"背が高い","hiragana":"せがたかい","arti":"Tubuhnya tinggi"},
+      {"no":"14","cara_baca":"Seikatsu","kanji":"生活","hiragana":"せいかつ","arti":"Kehidupan sehari-hari"},
+      {"no":"15","cara_baca":"Seikoushimasu","kanji":"成功します","hiragana":"せいこうします","arti":"Berhasil, sukses"},
+      {"no":"16","cara_baca":"Sekaijuu","kanji":"世界中","hiragana":"せかいじゅう","arti":"Seluruh dunia"},
+      {"no":"17","cara_baca":"Seki o hazushimasu","kanji":"席を外します","hiragana":"せきをはずします","arti":"Meninggalkan tempat"},
+      {"no":"18","cara_baca":"Semai","kanji":"狭い","hiragana":"せまい","arti":"Sempit"},
+      {"no":"19","cara_baca":"Sen","kanji":"千","hiragana":"せん","arti":"Ribuan"},
+      {"no":"20","cara_baca":"Sengetsu","kanji":"先月","hiragana":"せんげつ","arti":"Bulan lalu"},
+      {"no":"21","cara_baca":"Senshuu","kanji":"先週","hiragana":"せんしゅう","arti":"Minggu lalu"},
+      {"no":"22","cara_baca":"Sentakuki","kanji":"洗濯機","hiragana":"せんたくき","arti":"Mesin cuci"},
+      {"no":"23","cara_baca":"Sentakushimasu","kanji":"洗濯します","hiragana":"せんたくします","arti":"Mencuci baju"},
+      {"no":"24","cara_baca":"Setsumeishimasu","kanji":"説明します","hiragana":"せつめいします","arti":"Menjelaskan"},
+      {"no":"25","cara_baca":"Setsumeisho","kanji":"説明書","hiragana":"せつめいしょ","arti":"Lembar intruksi"},
+      {"no":"26","cara_baca":"Shakai","kanji":"社会","hiragana":"しゃかい","arti":"Masyarakat"},
+      {"no":"27","cara_baca":"Shakkin","kanji":"借金","hiragana":"しゃっきん","arti":"Uang pinjaman"},
+      {"no":"28","cara_baca":"Shashin","kanji":"写真","hiragana":"しゃしん","arti":"Foto"},
+      {"no":"29","cara_baca":"Shi","kanji":"四","hiragana":"し","arti":"Empat"},
+      {"no":"30","cara_baca":"Shiawase","kanji":"幸せ","hiragana":"しあわせ","arti":"Bahagia"},
+      {"no":"31","cara_baca":"Shichi","kanji":"七","hiragana":"しち","arti":"Tujuh"},
+      {"no":"32","cara_baca":"Shigatsu","kanji":"四月","hiragana":"しがつ","arti":"Bulan 4"},
+      {"no":"33","cara_baca":"Shigoto","kanji":"仕事","hiragana":"しごと","arti":"Pekerjaan"},
+      {"no":"34","cara_baca":"Shiken","kanji":"試験","hiragana":"しけん","arti":"Ujian"},
+      {"no":"35","cara_baca":"Shima","kanji":"島","hiragana":"しま","arti":"Pulau"},
+      {"no":"36","cara_baca":"Shimarimasu","kanji":"閉まります","hiragana":"しまります","arti":"Tertutup"},
+      {"no":"37","cara_baca":"Shimemasu","kanji":"閉めます","hiragana":"しめます","arti":"Menutup"},
+      {"no":"38","cara_baca":"Shinbun","kanji":"新聞","hiragana":"しんぶん","arti":"Koran"},
+      {"no":"39","cara_baca":"Shinimasu","kanji":"死にます","hiragana":"しにます","arti":"Mati, tewas"},
+      {"no":"40","cara_baca":"Shinjimasu","kanji":"信じます","hiragana":"しんじます","arti":"Mempercayai"},
+      {"no":"41","cara_baca":"Shinnenkai","kanji":"新年会","hiragana":"しんねんかい","arti":"Pesta awal tahun"},
+      {"no":"42","cara_baca":"Shinpaishimasu","kanji":"心配します","hiragana":"しんぱいします","arti":"Khawatir"},
+      {"no":"43","cara_baca":"Shinsetsu","kanji":"親切","hiragana":"しんせつ","arti":"Ramah"},
+      {"no":"45","cara_baca":"Shio","kanji":"塩","hiragana":"しお","arti":"Garam"},
+      {"no":"46","cara_baca":"Shiokarai","kanji":"塩辛い","hiragana":"しおからい","arti":"Asin"},
+      {"no":"47","cara_baca":"Shippaishimasu","kanji":"失敗します","hiragana":"しっぱいします","arti":"Gagal"},
+      {"no":"48","cara_baca":"Shirabemasu","kanji":"調べます","hiragana":"しらべます","arti":"Mencari informasi, memerikasa informasi"},
+      {"no":"49","cara_baca":"Shiriai","kanji":"知り合い","hiragana":"しりあい","arti":"Kenalan"},
+      {"no":"50","cara_baca":"Shirimasu","kanji":"知ります","hiragana":"しります","arti":"Mengetahui, mengenal"},
+      {"no":"51","cara_baca":"Shiroi","kanji":"白い","hiragana":"しろい","arti":"Putih"},
+      {"no":"52","cara_baca":"Shita","kanji":"下","hiragana":"した","arti":"Bawah"},
+      {"no":"53","cara_baca":"Shita","kanji":"舌","hiragana":"した","arti":"Lidah"},
+      {"no":"54","cara_baca":"Shitsumon","kanji":"質問","hiragana":"しつもん","arti":"Pertanyaan"},
+      {"no":"55","cara_baca":"Shizuka","kanji":"静か","hiragana":"しずか","arti":"Tenang, sepi, pendiam"},
+      {"no":"56","cara_baca":"Shodou","kanji":"書道","hiragana":"しょどう","arti":"Seni kaligrafi kanji"},
+      {"no":"57","cara_baca":"Shokuba","kanji":"職場","hiragana":"しょくば","arti":"Tempat kerja"},
+      {"no":"58","cara_baca":"Shokujishimasu","kanji":"食事します","hiragana":"しょくじします","arti":"Makan-makan"},
+      {"no":"59","cara_baca":"Shougakkou","kanji":"小学校","hiragana":"しょうがっこう","arti":"SD"},
+      {"no":"60","cara_baca":"Shougakusei","kanji":"小学生","hiragana":"しょうがくせい","arti":"Siswa sd"},
+      {"no":"61","cara_baca":"Shoukaishimasu","kanji":"紹介します","hiragana":"しょうかいします","arti":"Memperkenalkan"},
+      {"no":"62","cara_baca":"Shousetsu","kanji":"小説","hiragana":"しょうせつ","arti":"Novel"},
+      {"no":"63","cara_baca":"Shoutaijou","kanji":"招待状","hiragana":"しょうたいじょう","arti":"Surat undangan"},
+      {"no":"64","cara_baca":"Shoutaishimasu","kanji":"招待します","hiragana":"しょうたいします","arti":"Mengundang"},
+      {"no":"65","cara_baca":"Shucchou","kanji":"出張","hiragana":"しゅっちょう","arti":"Pergi dinas"},
+      {"no":"66","cara_baca":"Shukudai","kanji":"宿題","hiragana":"しゅくだい","arti":"Pr"},
+      {"no":"67","cara_baca":"Shussan","kanji":"出産","hiragana":"しゅっさん","arti":"Kelahiran bayi"},
+      {"no":"68","cara_baca":"Shuumatsu","kanji":"週末","hiragana":"しゅうまつ","arti":"Akhir pekan"},
+      {"no":"69","cara_baca":"Shuurishimasu","kanji":"修理します","hiragana":"しゅうりします","arti":"Memperbaiki"},
+      {"no":"70","cara_baca":"Shuuseishimasu","kanji":"修正します","hiragana":"しゅうせいします","arti":"Melakukan revisi"},
+      {"no":"71","cara_baca":"Sora","kanji":"空","hiragana":"そら","arti":"Langit"},
+      {"no":"72","cara_baca":"Soto","kanji":"外","hiragana":"そと","arti":"Luar"},
+      {"no":"73","cara_baca":"Sotsugyoushiki","kanji":"卒業式","hiragana":"そつぎょうしき","arti":"Upacara kelulusan"},
+      {"no":"74","cara_baca":"Sotsugyoushimasu","kanji":"卒業します","hiragana":"そつぎょうします","arti":"Lulus dari sekolah"},
+      {"no":"75","cara_baca":"Soubetsukai","kanji":"送別会","hiragana":"そうべつかい","arti":"Pesta perpisahan"},
+      {"no":"76","cara_baca":"Soujishimasu","kanji":"掃除します","hiragana":"そうじします","arti":"Bersih-bersih"},
+      {"no":"77","cara_baca":"Souryou","kanji":"送料","hiragana":"そうりょう","arti":"Biaya kirim"},
+      {"no":"78","cara_baca":"Subete","kanji":"すべて","hiragana":"すべて","arti":"Semuanya"},
+      {"no":"79","cara_baca":"Sugoshimasu","kanji":"過ごします","hiragana":"すごします","arti":"Melalui, menghabiskan waktu"},
+      {"no":"80","cara_baca":"Suiyoubi","kanji":"水曜日","hiragana":"すいようび","arti":"Hari rabu"},
+      {"no":"81","cara_baca":"Suki","kanji":"好き","hiragana":"すき","arti":"Suka"},
+      {"no":"82","cara_baca":"Sukoshi","kanji":"少し","hiragana":"すこし","arti":"Sedikit"},
+      {"no":"83","cara_baca":"Sukunai","kanji":"少ない","hiragana":"すくない","arti":"Sedikit"},
+      {"no":"84","cara_baca":"Sumimasu","kanji":"住みます","hiragana":"すむ","arti":"Tinggal"},
+      {"no":"85","cara_baca":"Sumou","kanji":"相撲","hiragana":"すもう","arti":"Sumo"},
+      {"no":"86","cara_baca":"Sumu","kanji":"住む","hiragana":"すむ","arti":"Tinggal"},
+      {"no":"87","cara_baca":"Sutemasu","kanji":"捨てます","hiragana":"すてます","arti":"Membuang"},
+      {"no":"88","cara_baca":"Suugaku","kanji":"数学","hiragana":"すうがく","arti":"Matematika"},
+      {"no":"89","cara_baca":"Suwarimasu","kanji":"座ります","hiragana":"すわります","arti":"Duduk"},
+      {"no":"90","cara_baca":"Suzushii","kanji":"涼しい","hiragana":"すずしい","arti":"Sejuk"},
+      {"no":"1","cara_baca":"Tabemono","kanji":"食べ物","hiragana":"たべもの","arti":"Makanan"},
+      {"no":"2","cara_baca":"Tachimasu","kanji":"立ちます","hiragana":"たちます","arti":"Berdiri"},
+      {"no":"3","cara_baca":"Tadashii","kanji":"正しい","hiragana":"ただしい","arti":"Benar"},
+      {"no":"4","cara_baca":"Taifuu","kanji":"台風","hiragana":"たいふう","arti":"Angin topan"},
+      {"no":"5","cara_baca":"Taihen","kanji":"大変","hiragana":"たいへん","arti":"Berat"},
+      {"no":"6","cara_baca":"Taiinshimasu","kanji":"退院します","hiragana":"たいいんします","arti":"Keluar dari opname rumah sakit"},
+      {"no":"7","cara_baca":"Taijuu","kanji":"体重","hiragana":"たいじゅう","arti":"Berat badan"},
+      {"no":"8","cara_baca":"Taion","kanji":"体温","hiragana":"たいおん","arti":"Suhu tubuh"},
+      {"no":"9","cara_baca":"Taionkei","kanji":"体温計","hiragana":"たいおんけい","arti":"Termometer"},
+      {"no":"10","cara_baca":"Taishikan","kanji":"大使館","hiragana":"たいしかん","arti":"Kantor kedutaan besar"},
+      {"no":"11","cara_baca":"Takai","kanji":"高い","hiragana":"たかい","arti":"Tinggi, mahal"},
+      {"no":"12","cara_baca":"Takuhaibin","kanji":"宅配便","hiragana":"たくはいびん","arti":"Layanan delivery"},
+      {"no":"13","cara_baca":"Tamago","kanji":"卵","hiragana":"たまご","arti":"Telur"},
+      {"no":"14","cara_baca":"Tamanegi","kanji":"玉ねぎ","hiragana":"たまねぎ","arti":"Bawang bombay"},
+      {"no":"15","cara_baca":"Tanjoubi","kanji":"誕生日","hiragana":"たんじょうび","arti":"Hari ulang tahun"},
+      {"no":"16","cara_baca":"Tanoshii","kanji":"楽しい","hiragana":"たのしい","arti":"Menyenangkan"},
+      {"no":"17","cara_baca":"Tantousha","kanji":"担当者","hiragana":"たんとうしゃ","arti":"Penanggung jawab"},
+      {"no":"18","cara_baca":"Tarimasu","kanji":"足ります","hiragana":"たります","arti":"Cukup"},
+      {"no":"19","cara_baca":"Tasukemasu","kanji":"助けます","hiragana":"たすけます","arti":"Menolong"},
+      {"no":"20","cara_baca":"Tatemasu","kanji":"建てます","hiragana":"たてます","arti":"Mendirikan"},
+      {"no":"21","cara_baca":"Tatemono","kanji":"建物","hiragana":"たてもの","arti":"Bangunan"},
+      {"no":"22","cara_baca":"Te","kanji":"手","hiragana":"て","arti":"Tangan"},
+      {"no":"23","cara_baca":"Tegami","kanji":"手紙","hiragana":"てがみ","arti":"Surat"},
+      {"no":"24","cara_baca":"Temiyage","kanji":"手土産","hiragana":"てみやげ","arti":"Oleh-oleh yg dibawa tamu"},
+      {"no":"25","cara_baca":"Ten","kanji":"~点","hiragana":"~てん","arti":"Satuan nilai, skor"},
+      {"no":"26","cara_baca":"Tenki","kanji":"天気","hiragana":"てんきん","arti":"Cuaca"},
+      {"no":"27","cara_baca":"Tenkinshimasu","kanji":"転勤します","hiragana":"てんきんします","arti":"Mutasi kerja"},
+      {"no":"28","cara_baca":"Tenkiyohou","kanji":"天気予報","hiragana":"てんきよほう","arti":"Perkiraan cuaca"},
+      {"no":"29","cara_baca":"Tetsudaimasu","kanji":"手伝います","hiragana":"てつだいます","arti":"Membantu"},
+      {"no":"30","cara_baca":"Tobimasu","kanji":"飛びます","hiragana":"とびます","arti":"Terbang"},
+      {"no":"31","cara_baca":"Tojimasu","kanji":"閉じます","hiragana":"とじます","arti":"Menutup mata"},
+      {"no":"32","cara_baca":"Tokei","kanji":"時計","hiragana":"とけい","arti":"Jam"},
+      {"no":"33","cara_baca":"Tokubetsu","kanji":"特別","hiragana":"とくべつ","arti":"Spesial, khusus"},
+      {"no":"34","cara_baca":"Tomarimasu","kanji":"止まります","hiragana":"とまります","arti":"Menginap"},
+      {"no":"35","cara_baca":"Tomemasu","kanji":"止めます","hiragana":"とめます","arti":"Memarkir mobil"},
+      {"no":"36","cara_baca":"Tomodachi","kanji":"友達","hiragana":"ともだち","arti":"Teman"},
+      {"no":"37","cara_baca":"Tonari","kanji":"隣","hiragana":"となり","arti":"Sebelah"},
+      {"no":"38","cara_baca":"Tooi","kanji":"遠い","hiragana":"とおい","arti":"Jauh"},
+      {"no":"39","cara_baca":"Tooka","kanji":"十日","hiragana":"とおか","arti":"Tanggal 10"},
+      {"no":"40","cara_baca":"Toshokan","kanji":"図書館","hiragana":"としょかん","arti":"Perpustakaan"},
+      {"no":"41","cara_baca":"Touchakushimasu","kanji":"到着します","hiragana":"とうちゃくします","arti":"Tiba"},
+      {"no":"42","cara_baca":"Toufu","kanji":"豆腐","hiragana":"とうふ","arti":"Tahu"},
+      {"no":"43","cara_baca":"Toukyou","kanji":"東京","hiragana":"とうきょう","arti":"Tokyo"},
+      {"no":"45","cara_baca":"Tsuitachi","kanji":"一日","hiragana":"ついたち","arti":"Tanggal 1"},
+      {"no":"46","cara_baca":"Tsukaikata","kanji":"使い方","hiragana":"つかいかた","arti":"Cara menggunakan"},
+      {"no":"47","cara_baca":"Tsukaimasu","kanji":"使います","hiragana":"つかいます","arti":"Menggunakan"},
+      {"no":"48","cara_baca":"Tsukaremasu","kanji":"疲れます","hiragana":"つかれます","arti":"Lelah"},
+      {"no":"49","cara_baca":"Tsuki","kanji":"月","hiragana":"つき","arti":"Bulan(moon)"},
+      {"no":"50","cara_baca":"Tsukimasu","kanji":"着きます","hiragana":"つきます","arti":"Tiba"},
+      {"no":"51","cara_baca":"Tsukurimasu","kanji":"作ります","hiragana":"つくります","arti":"Membuat"},
+      {"no":"52","cara_baca":"Tsuma","kanji":"妻","hiragana":"つま","arti":"Istri saya"},
+      {"no":"53","cara_baca":"Tsumetai","kanji":"冷たい","hiragana":"つめたい","arti":"Dingin untuk benda"},
+      {"no":"54","cara_baca":"Tsurete ikimasu","kanji":"連れて行きます","hiragana":"つれていきます","arti":"Mengajak pergi"},
+      {"no":"55","cara_baca":"Tsuri","kanji":"釣り","hiragana":"つり","arti":"Memancing"},
+      {"no":"56","cara_baca":"Tsutaemasu","kanji":"伝えます","hiragana":"つたえます","arti":"Menyampaikan pesan"},
+      {"no":"57","cara_baca":"Tsuuwa","kanji":"通話","hiragana":"つうわ","arti":"Panggilan telepon"},
+      {"no":"58","cara_baca":"Tsuyoi","kanji":"強い","hiragana":"つよい","arti":"Kuat"},
+      {"no":"1","cara_baca":"Ue","kanji":"上","hiragana":"うえ","arti":"Atas"},
+      {"no":"2","cara_baca":"Ugokimasu","kanji":"動きます","hiragana":"うごきます","arti":"Bergerak"},
+      {"no":"3","cara_baca":"Ukemasu","kanji":"受けます","hiragana":"うけます","arti":"Mengikuti ujian"},
+      {"no":"4","cara_baca":"Umi","kanji":"海","hiragana":"うみ","arti":"Laut"},
+      {"no":"5","cara_baca":"Undoushimasu","kanji":"運動します","hiragana":"うんどうします","arti":"Berolahraga"},
+      {"no":"6","cara_baca":"Untenshimasu","kanji":"運転します","hiragana":"うんてんします","arti":"Menyetir"},
+      {"no":"7","cara_baca":"Ureshii","kanji":"嬉しい","hiragana":"うれしい","arti":"Senang"},
+      {"no":"8","cara_baca":"Urimasu","kanji":"売ります","hiragana":"うります","arti":"Menjual"},
+      {"no":"9","cara_baca":"Ushiro","kanji":"後ろ","hiragana":"うしろ","arti":"Belakang"},
+      {"no":"10","cara_baca":"Uta","kanji":"歌","hiragana":"うた","arti":"Lagu"},
+      {"no":"11","cara_baca":"Utaimasu","kanji":"歌います","hiragana":"うたいます","arti":"Bernyanyi"},
+      {"no":"1","cara_baca":"Wakai","kanji":"若い","hiragana":"わかい","arti":"Muda"},
+      {"no":"2","cara_baca":"Wakaremasu","kanji":"別れます","hiragana":"わかれます","arti":"Berpisah"},
+      {"no":"3","cara_baca":"Waraimasu","kanji":"笑います","hiragana":"わらいます","arti":"Tertawa"},
+      {"no":"4","cara_baca":"Warui","kanji":"悪い","hiragana":"わるい","arti":"Buruk, jelek"},
+      {"no":"5","cara_baca":"Wakarimasu","kanji":"分かります","hiragana":"わかります","arti":"Mengerti"},
+      {"no":"6","cara_baca":"Washoku","kanji":"和食","hiragana":"わしょく","arti":"Makanan jepang"},
+      {"no":"7","cara_baca":"Wasuremasu","kanji":"忘れます","hiragana":"わすれます","arti":"Lupa"},
+      {"no":"1","cara_baca":"Yachin","kanji":"家賃","hiragana":"やちん","arti":"Sewa rumah"},
+      {"no":"2","cara_baca":"Yakemasu","kanji":"焼けます","hiragana":"やけます","arti":"Terbakar"},
+      {"no":"3","cara_baca":"Yakimasu","kanji":"焼きます","hiragana":"やきます","arti":"Memanggang, membakar"},
+      {"no":"4","cara_baca":"Yakushoku","kanji":"約色","hiragana":"やくしょく","arti":"Janji"},
+      {"no":"5","cara_baca":"Yama","kanji":"山","hiragana":"やま","arti":"Gunung"},
+      {"no":"6","cara_baca":"Yamemasu","kanji":"やめます","hiragana":"やめます","arti":"Berhenti"},
+      {"no":"7","cara_baca":"Yaoya","kanji":"八百屋","hiragana":"やおや","arti":"Toko sayur"},
+      {"no":"8","cara_baca":"Yasai","kanji":"野菜","hiragana":"やさい","arti":"Sayur"},
+      {"no":"9","cara_baca":"Yasashii","kanji":"易しい","hiragana":"やさしい","arti":"Mudah"},
+      {"no":"10","cara_baca":"Yasashii","kanji":"優しい","hiragana":"やさしい","arti":"Baik hati"},
+      {"no":"11","cara_baca":"Yasui","kanji":"安い","hiragana":"やすい","arti":"Murah"},
+      {"no":"12","cara_baca":"Yasumimasu","kanji":"休みます","hiragana":"やすみます","arti":"Beristirahat, libur"},
+      {"no":"13","cara_baca":"Yasuminohi","kanji":"休みの日","hiragana":"やすみのひ","arti":"Hari libur"},
+      {"no":"14","cara_baca":"Yokka","kanji":"四日","hiragana":"よっか","arti":"Tanggal 4"},
+      {"no":"15","cara_baca":"Yobimasu","kanji":"呼びます","hiragana":"よびます","arti":"Memanggil"},
+      {"no":"16","cara_baca":"Yomimasu","kanji":"読みます","hiragana":"よみます","arti":"Membaca"},
+      {"no":"17","cara_baca":"Yon","kanji":"四","hiragana":"よん","arti":"Empat"},
+      {"no":"18","cara_baca":"Yoru","kanji":"夜","hiragana":"よる","arti":"Malam"},
+      {"no":"19","cara_baca":"Yotei","kanji":"予定","hiragana":"よてい","arti":"Jadwal, agenda"},
+      {"no":"20","cara_baca":"Youka","kanji":"八日","hiragana":"ようか","arti":"Tanggal 8"},
+      {"no":"21","cara_baca":"Youshoku","kanji":"洋食","hiragana":"ようしょく","arti":"Makanan ala barat"},
+      {"no":"22","cara_baca":"Yowai","kanji":"弱い","hiragana":"よわい","arti":"Lemah"},
+      {"no":"23","cara_baca":"Yoyakushimasu","kanji":"予約します","hiragana":"よやくします","arti":"Memesan, melakukan reservasi"},
+      {"no":"24","cara_baca":"Yubi","kanji":"指","hiragana":"ゆび","arti":"Jari"},
+      {"no":"25","cara_baca":"Yuki","kanji":"雪","hiragana":"ゆき","arti":"Salju"},
+      {"no":"26","cara_baca":"Yuuryou","kanji":"有料","hiragana":"ゆうりょう","arti":"Berbayar"},
+      {"no":"27","cara_baca":"Yuubinkyoku","kanji":"郵便局","hiragana":"ゆうびんきょうく","arti":"Kantor pos"},
+      {"no":"28","cara_baca":"Yuumei","kanji":"有名","hiragana":"ゆうめい","arti":"Terkenal"}
+    ];
+
+    // State variables
+    let selectedCategories = [];
+    let quizQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let incorrectQuestions = [];
+    let isReviewMode = false;
+    let answeredCorrectly = 0;
+    let totalAnswered = 0;
+
+    // DOM Elements
+    const screens = {
+      welcome: document.getElementById('welcome-screen'),
+      category: document.getElementById('category-screen'),
+      quiz: document.getElementById('quiz-screen'),
+      result: document.getElementById('result-screen')
+    };
+
+    const quizElements = {
+      kanji: document.getElementById('question-kanji'),
+      hiragana: document.getElementById('answer-hiragana'),
+      meaning: document.getElementById('answer-meaning'),
+      optionsContainer: document.getElementById('options-container'),
+      currentQuestion: document.getElementById('current-question'),
+      totalQuestions: document.getElementById('total-questions'),
+      progressPercent: document.getElementById('progress-percent'),
+      progressBar: document.getElementById('progress-bar'),
+      flashcard: document.getElementById('flashcard'),
+      nextBtn: document.getElementById('next-btn'),
+      feedback: document.getElementById('feedback')
+    };
+
+    const resultElements = {
+      score: document.getElementById('score-display'),
+      message: document.getElementById('message-display'),
+      stats: document.getElementById('stats-display')
+    };
+
+    // Show screen functions
+    function showScreen(screenName) {
+      Object.values(screens).forEach(screen => screen.classList.remove('active'));
+      screens[screenName].classList.add('active');
+    }
+
+    function showWelcomeScreen() {
+      showScreen('welcome');
+    }
+
+    function showCategoryScreen() {
+      showScreen('category');
+      // Reset category selection
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      selectedCategories = [];
+    }
+
+    function showQuizScreen() {
+      showScreen('quiz');
+      startQuizSession();
+    }
+
+    function showResultScreen() {
+      showScreen('result');
+      displayResults();
+    }
+
+    // Category selection
+    function selectCategory(letter) {
+      const btn = event.target;
+      const index = selectedCategories.indexOf(letter);
+      
+      if (index === -1) {
+        selectedCategories.push(letter);
+        btn.classList.add('selected');
+      } else {
+        selectedCategories.splice(index, 1);
+        btn.classList.remove('selected');
+      }
+    }
+
+    function selectAllCategories() {
+      selectedCategories = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'y'];
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.add('selected');
+      });
+    }
+
+    // Quiz functions
+    function startQuiz() {
+      if (selectedCategories.length === 0) {
+        alert('Silakan pilih minimal satu kategori!');
+        return;
+      }
+      
+      // Filter questions based on selected categories
+      quizQuestions = kanjiData.filter(item => {
+        const firstChar = item.kanji.charAt(0).toLowerCase();
+        let category = '';
+        
+        // Map first character to category letter
+        if (firstChar >= 'あ' && firstChar <= 'お') category = 'a';
+        else if (firstChar >= 'か' && firstChar <= 'こ') category = 'k'; // Perlu penyesuaian untuk K
+        else if (firstChar >= 'さ' && firstChar <= 'そ') category = 's';
+        else if (firstChar >= 'た' && firstChar <= 'と') category = 't';
+        else if (firstChar >= 'な' && firstChar <= 'の') category = 'n';
+        else if (firstChar >= 'は' && firstChar <= 'ほ') category = 'h';
+        else if (firstChar >= 'ま' && firstChar <= 'も') category = 'm';
+        else if (firstChar >= 'や' && firstChar <= 'よ') category = 'y';
+        else if (firstChar >= 'ら' && firstChar <= 'ろ') category = 'r';
+        else if (firstChar >= 'わ' && firstChar <= 'を') category = 'w';
+        else if (firstChar >= 'が' && firstChar <= 'ご') category = 'g';
+        else if (firstChar >= 'ざ' && firstChar <= 'ぞ') category = 'z'; // Tidak ada dalam daftar awal
+        else if (firstChar >= 'だ' && firstChar <= 'ど') category = 'd';
+        else if (firstChar >= 'ば' && firstChar <= 'ぼ') category = 'b';
+        else if (firstChar >= 'ぱ' && firstChar <= 'ぽ') category = 'p';
+        else if (firstChar >= '一' && firstChar <= '龠') {
+          // For kanji characters, we'll use the first letter of the romaji
+          const romajiFirst = item.cara_baca.charAt(0).toLowerCase();
+          category = romajiFirst;
+        }
+        
+        return selectedCategories.includes(category);
+      });
+      
+      // Jika tidak ada pertanyaan yang cocok, gunakan semua data
+      if (quizQuestions.length === 0) {
+        quizQuestions = [...kanjiData];
+      }
+      
+      currentQuestionIndex = 0;
+      score = 0;
+      incorrectQuestions = [];
+      isReviewMode = false;
+      answeredCorrectly = 0;
+      totalAnswered = 0;
+      showQuizScreen();
+    }
+
+    function startQuizSession() {
+      if (quizQuestions.length === 0) return;
+      
+      quizElements.totalQuestions.textContent = quizQuestions.length;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestionIndex >= quizQuestions.length) {
+        endQuiz();
+        return;
+      }
+      
+      const question = quizQuestions[currentQuestionIndex];
+      
+      // Update progress
+      quizElements.currentQuestion.textContent = currentQuestionIndex + 1;
+      const percent = Math.round(((currentQuestionIndex) / quizQuestions.length) * 100);
+      quizElements.progressPercent.textContent = percent;
+      quizElements.progressBar.style.width = percent + '%';
+      
+      // Reset flashcard
+      quizElements.flashcard.classList.remove('flipped');
+      
+      // Set question
+      quizElements.kanji.textContent = question.kanji;
+      
+      // Hide next button
+      quizElements.nextBtn.style.display = 'none';
+      
+      // Hide feedback
+      quizElements.feedback.style.display = 'none';
+      
+      // Generate options (hiragana)
+      generateOptions(question);
+    }
+
+    function generateOptions(correctAnswer) {
+      // Get 3 random incorrect options
+      const options = [correctAnswer];
+      
+      while (options.length < 4) {
+        const randomIndex = Math.floor(Math.random() * kanjiData.length);
+        const randomOption = kanjiData[randomIndex];
+        
+        // Make sure it's not already in options and not the correct answer
+        if (!options.find(opt => opt.hiragana === randomOption.hiragana) && 
+            randomOption.hiragana !== correctAnswer.hiragana) {
+          options.push(randomOption);
+        }
+      }
+      
+      // Shuffle options
+      shuffleArray(options);
+      
+      // Clear previous options
+      quizElements.optionsContainer.innerHTML = '';
+      
+      // Add new options
+      options.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'btn option-btn';
+        button.textContent = option.hiragana;
+        button.onclick = () => checkAnswer(option, correctAnswer);
+        quizElements.optionsContainer.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selected, correct) {
+      // Disable all option buttons
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correct.hiragana) {
+          btn.classList.add('correct');
+        } else if (btn.textContent === selected.hiragana && selected.hiragana !== correct.hiragana) {
+          btn.classList.add('incorrect');
+        }
+      });
+      
+      totalAnswered++;
+      
+      // Check if answer is correct
+      if (selected.hiragana === correct.hiragana) {
+        score++;
+        answeredCorrectly++;
+        showFeedback(true);
+      } else {
+        incorrectQuestions.push({
+          question: correct,
+          selected: selected
+        });
+        showFeedback(false);
+      }
+      
+      // Show answer after delay
+      setTimeout(() => {
+        showAnswer(correct);
+      }, 1500);
+    }
+
+    function showFeedback(isCorrect) {
+      quizElements.feedback.textContent = isCorrect ? 'Benar! ' + String.fromCodePoint(0x1F389) : 'Salah! ' + String.fromCodePoint(0x1F61E);
+      quizElements.feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+      quizElements.feedback.style.display = 'block';
+    }
+
+    function showAnswer(correctAnswer) {
+      quizElements.hiragana.textContent = correctAnswer.hiragana;
+      quizElements.meaning.textContent = correctAnswer.arti;
+      quizElements.flashcard.classList.add('flipped');
+      
+      // Show next button
+      quizElements.nextBtn.style.display = 'flex';
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function skipQuestion() {
+      incorrectQuestions.push({
+        question: quizQuestions[currentQuestionIndex],
+        selected: null
+      });
+      
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function endQuiz() {
+      showResultScreen();
+    }
+
+    function displayResults() {
+      const percent = quizQuestions.length > 0 ? Math.round((score / quizQuestions.length) * 100) : 0;
+      resultElements.score.textContent = percent + '%';
+      
+      let message = '';
+      if (percent >= 90) {
+        message = 'Luar biasa! Kamu benar-benar menguasai kanji!';
+      } else if (percent >= 70) {
+        message = 'Bagus! Terus belajar dan kamu akan semakin mahir!';
+      } else if (percent >= 50) {
+        message = 'Masih butuh belajar lagi, tapi kamu pasti bisa!';
+      } else {
+        message = 'Jangan menyerah! Latihan membuat sempurna!';
+      }
+      
+      resultElements.message.textContent = message;
+      
+      // Display stats
+      const incorrectCount = quizQuestions.length - score;
+      resultElements.stats.innerHTML = `
+        <p><i class="fas fa-check-circle"></i> Terjawab Benar: ${score}</p>
+        <p><i class="fas fa-times-circle"></i> Terjawab Salah: ${incorrectCount}</p>
+        <p><i class="fas fa-percentage"></i> Persentase: ${percent}%</p>
+      `;
+    }
+
+    function retryIncorrect() {
+      if (incorrectQuestions.length === 0) {
+        alert('Tidak ada soal yang salah!');
+        return;
+      }
+      
+      quizQuestions = incorrectQuestions.map(item => item.question);
+      currentQuestionIndex = 0;
+      score = 0;
+      incorrectQuestions = [];
+      isReviewMode = true;
+      showQuizScreen();
+    }
+
+    // Utility functions
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Create a Blob for the service worker code
+        const swCode = `
+          self.addEventListener('install', (event) => {
+            console.log('Service Worker installing.');
+          });
+
+          self.addEventListener('activate', (event) => {
+            console.log('Service Worker activated.');
+          });
+
+          self.addEventListener('fetch', (event) => {
+            console.log('Fetch event for ', event.request.url);
+            event.respondWith(
+              fetch(event.request).catch(() => {
+                // Fallback for offline mode if needed
+                return new Response('Offline mode');
+              })
+            );
+          });
+        `;
+        const blob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(blob);
+
+        navigator.serviceWorker.register(swUrl)
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
